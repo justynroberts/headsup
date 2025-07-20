@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coachly - AI Sales Coach</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: linear-gradient(135deg, #0a0a0a 0%, #111111 50%, #0f0f0f 100%);
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00d4ff 0%, #5b8def 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #000;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: -0.025em;
+        }
+
+        .brand-tagline {
+            font-size: 0.7rem;
+            color: #888888;
+            font-weight: 400;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .control-button {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .control-button:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .primary-button {
+            background: linear-gradient(135deg, #00d4ff 0%, #5b8def 100%);
+            border: none;
+            color: #000000;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .danger-button {
+            background: linear-gradient(135deg, #ff3b3b 0%, #ff6b6b 100%);
+            border: none;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .danger-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 59, 59, 0.3);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: rgba(0, 212, 255, 0.3);
+            color: #00d4ff;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #666666;
+        }
+
+        .status-active .status-dot {
+            background: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: calc(100vh - 73px); /* Header height */
+        }
+
+        /* Live View */
+        .live-view {
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .live-view.collapsed {
+            height: 0;
+            border-bottom: none;
+        }
+
+        .live-view-header {
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .live-view-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .toggle-button {
+            background: transparent;
+            border: none;
+            color: #888888;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-button:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .flowing-container {
+            padding: 2rem;
+            min-height: 120px;
+            max-height: 200px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .word-stream {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            align-items: baseline;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .word {
+            display: inline-block;
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            animation: wordSlide 0.4s ease;
+            font-weight: 400;
+            font-size: 0.95rem;
+        }
+
+        .word.interim {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .word.final {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .word.high-confidence {
+            background: rgba(0, 212, 255, 0.2);
+            font-weight: 500;
+        }
+
+        @keyframes wordSlide {
+            from {
+                opacity: 0;
+                transform: translateY(15px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .sentence-break {
+            width: 100%;
+            height: 0.8rem;
+            display: block;
+        }
+
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0.3rem 0.7rem;
+            background: rgba(91, 141, 239, 0.15);
+            border: 1px solid rgba(91, 141, 239, 0.3);
+            border-radius: 6px;
+            margin-left: 0.4rem;
+        }
+
+        .typing-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #5b8def;
+            animation: typingPulse 1.4s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingPulse {
+            0%, 80%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            40% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Content Mapping */
+        .content-mapping-panel {
+            background: #0a0a0a;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            height: auto;
+            position: relative;
+            z-index: 50;
+        }
+
+        .content-mapping-panel.collapsed {
+            height: 0;
+            border-bottom: none;
+        }
+
+        .mapping-header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .mapping-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #5b8def;
+        }
+
+        .mapping-content {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .mapping-form {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 2rem;
+            min-width: 0;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #cccccc;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #ffffff;
+            font-size: 0.875rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        select.form-input {
+            cursor: pointer;
+        }
+
+        .add-mapping-button {
+            background: linear-gradient(135deg, #00d4ff 0%, #5b8def 100%);
+            border: none;
+            color: #000000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .add-mapping-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .mappings-list {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .mapping-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .mapping-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .mapping-keywords {
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: #888888;
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
+
+        .mapping-content-text {
+            font-size: 0.85rem;
+            color: #aaaaaa;
+            line-height: 1.5;
+            max-height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+
+        .delete-mapping {
+            background: transparent;
+            border: none;
+            color: #666666;
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+        }
+
+        .delete-mapping:hover {
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+        }
+
+        /* Coaching Section */
+        .coaching-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            background: #0a0a0a;
+            overflow: hidden;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .coaching-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 1rem;
+        }
+
+        .coaching-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            animation: cardSlide 0.5s ease;
+            max-height: 200px;
+            overflow: hidden;
+        }
+
+        .coaching-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes cardSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .coaching-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .coaching-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .coaching-icon.objection {
+            background: linear-gradient(135deg, #ff3b3b 0%, #ff6b6b 100%);
+            color: #ffffff;
+        }
+
+        .coaching-icon.opportunity {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: #ffffff;
+        }
+
+        .coaching-icon.competitive {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #ffffff;
+        }
+
+        .coaching-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .coaching-text {
+            color: #cccccc;
+            line-height: 1.5;
+            font-size: 0.8rem;
+        }
+
+        .coaching-timestamp {
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: #666666;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Empty States */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1.5rem;
+            text-align: center;
+            color: #666666;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #888888;
+        }
+
+        .empty-subtitle {
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        /* Audio Visualization */
+        .audio-visualizer {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .audio-bars {
+            display: flex;
+            gap: 2px;
+            align-items: end;
+            height: 16px;
+        }
+
+        .audio-bar {
+            width: 2px;
+            background: #00d4ff;
+            border-radius: 1px;
+            transition: height 0.1s ease;
+            opacity: 0.7;
+        }
+
+        /* Stats */
+        .stats-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-number {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .mapping-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .coaching-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .header-controls {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .control-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .coaching-section {
+                padding: 1rem;
+            }
+
+            .coaching-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                gap: 1rem;
+            }
+            
+            .flowing-container {
+                padding: 1rem;
+                max-height: 150px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-section">
+                <div class="logo">CY</div>
+                <div class="brand-text">
+                    <div class="brand-name">Coachly</div>
+                    <div class="brand-tagline">AI-Powered Sales Coach</div>
+                </div>
+            </div>
+
+            <div class="header-controls">
+                <div class="audio-visualizer" id="audioVisualizer" style="display: none;">
+                    <div class="audio-bars">
+                        <div class="audio-bar" style="height: 3px;"></div>
+                        <div class="audio-bar" style="height: 6px;"></div>
+                        <div class="audio-bar" style="height: 9px;"></div>
+                        <div class="audio-bar" style="height: 5px;"></div>
+                        <div class="audio-bar" style="height: 8px;"></div>
+                    </div>
+                </div>
+
+                <div id="statusIndicator" class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Ready</span>
+                </div>
+
+                <button id="toggleLiveView" class="control-button">
+                    <i class="fas fa-eye-slash"></i>
+                    <span>Show Live</span>
+                </button>
+
+                <button id="toggleContentMapping" class="control-button">
+                    <i class="fas fa-cogs"></i>
+                    <span>Content Map</span>
+                </button>
+
+                <button id="startButton" class="control-button primary-button">
+                    <i class="fas fa-microphone"></i>
+                    <span>Start Recording</span>
+                </button>
+
+                <button id="stopButton" class="control-button danger-button" style="display: none;">
+                    <i class="fas fa-stop"></i>
+                    <span>Stop</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Live View -->
+            <div class="live-view collapsed" id="liveView">
+                <div class="live-view-header">
+                    <div class="live-view-title">
+                        <i class="fas fa-wave-square"></i>
+                        <span>Live Transcription Stream</span>
+                    </div>
+                </div>
+                
+                <div class="flowing-container">
+                    <div id="wordStream" class="word-stream">
+                        <div class="empty-state">
+                            <div class="empty-icon">🎙️</div>
+                            <div class="empty-title">Ready for Live Transcription</div>
+                            <div class="empty-subtitle">Speak naturally and watch your words flow in real-time</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat">
+                        <div class="stat-number" id="wordCount">0</div>
+                        <div class="stat-label">Words</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" id="sentenceCount">0</div>
+                        <div class="stat-label">Sentences</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" id="confidenceAvg">0%</div>
+                        <div class="stat-label">Confidence</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" id="sessionTime">00:00</div>
+                        <div class="stat-label">Session</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Mapping Panel -->
+            <div class="content-mapping-panel collapsed" id="contentMappingPanel">
+                <div class="mapping-header">
+                    <div class="mapping-title">
+                        <i class="fas fa-cogs"></i>
+                        <span>Content Mapping Configuration</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span style="font-size: 0.8rem; color: #666666;">Configure AI coaching responses</span>
+                        <button class="toggle-button" id="closeMappingPanel">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mapping-content">
+                    <div class="mapping-form">
+                        <h4 style="color: #ffffff; margin-bottom: 1rem; font-size: 1rem;">Add New Content Mapping</h4>
+                        
+                        <div class="form-group">
+                            <label for="mappingType">Type</label>
+                            <select id="mappingType" class="form-input">
+                                <option value="hint">💡 Hint</option>
+                                <option value="compintel">🎯 Competitive Intelligence</option>
+                                <option value="keyword">🔑 Keyword Response</option>
+                                <option value="objection">🛡️ Objection Handler</option>
+                                <option value="closing">🤝 Closing Technique</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="mappingKeywords">Keywords/Phrases (comma-separated)</label>
+                            <input type="text" id="mappingKeywords" class="form-input" placeholder="e.g., IncidentIO, Incident IO, incident management">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="mappingContent">Coaching Content (HTML supported)</label>
+                            <textarea id="mappingContent" class="form-input form-textarea" placeholder="Enter the coaching advice with emojis and formatting..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="fuzzyMatching" checked style="margin-right: 0.5rem;">
+                                Enable fuzzy matching
+                            </label>
+                        </div>
+                        
+                        <button class="add-mapping-button" id="addMappingButton">
+                            <i class="fas fa-plus"></i> Add Mapping
+                        </button>
+                    </div>
+                    
+                    <div class="mappings-list">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h4 style="color: #ffffff; font-size: 1rem; margin: 0;">Active Mappings</h4>
+                            <span id="mappingCount" style="font-size: 0.8rem; color: #666666;">0 mappings</span>
+                        </div>
+                        <div id="mappingsList">
+                            <div class="empty-state" style="padding: 3rem 2rem; text-align: center; color: #666666;">
+                                <div style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;">📦</div>
+                                <div style="font-size: 0.9rem;">No content mappings configured yet</div>
+                                <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">Add keywords and coaching content to get started</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coaching Section -->
+            <div class="coaching-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-brain"></i>
+                        <span>AI Coaching Insights</span>
+                    </div>
+                </div>
+
+                <div class="coaching-grid" id="coachingGrid">
+                    <div class="empty-state">
+                        <div class="empty-icon">🧠</div>
+                        <div class="empty-title">AI Analysis Ready</div>
+                        <div class="empty-subtitle">
+                            Start recording to receive real-time coaching insights based on your speech patterns and content mappings.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class Coachly {
+            constructor() {
+                this.isRecording = false;
+                this.recognition = null;
+                this.audioContext = null;
+                this.mediaStream = null;
+                this.liveViewVisible = false;
+                
+                // Metrics
+                this.wordCount = 0;
+                this.sentenceCount = 0;
+                this.confidenceSum = 0;
+                this.confidenceCount = 0;
+                this.sessionStartTime = null;
+                this.sessionTimer = null;
+                
+                // Word flow
+                this.currentSentence = [];
+                this.typingIndicator = null;
+                
+                // Content mapping system
+                this.contentMappings = [];
+                this.mappingPanelVisible = false;
+                
+                // Sentence assembly
+                this.sentenceBuffer = [];
+                this.sentenceTimeout = null;
+                
+                this.setupEventListeners();
+                this.initializeUI();
+                this.loadContentMappings();
+            }
+
+            setupEventListeners() {
+                document.getElementById('startButton').addEventListener('click', () => this.start());
+                document.getElementById('stopButton').addEventListener('click', () => this.stop());
+                document.getElementById('toggleLiveView').addEventListener('click', () => this.toggleLiveView());
+                document.getElementById('toggleContentMapping').addEventListener('click', () => this.toggleContentMapping());
+                document.getElementById('closeMappingPanel').addEventListener('click', () => this.toggleContentMapping());
+                document.getElementById('addMappingButton').addEventListener('click', () => this.addContentMapping());
+            }
+
+            initializeUI() {
+                // Initialize session timer display
+                this.updateSessionTimer();
+                // Live view starts collapsed
+                const liveView = document.getElementById('liveView');
+                liveView.classList.add('collapsed');
+            }
+
+            toggleLiveView() {
+                const liveView = document.getElementById('liveView');
+                const toggleButton = document.getElementById('toggleLiveView');
+                const icon = toggleButton.querySelector('i');
+                
+                this.liveViewVisible = !this.liveViewVisible;
+                
+                if (this.liveViewVisible) {
+                    liveView.classList.remove('collapsed');
+                    icon.className = 'fas fa-eye';
+                    toggleButton.querySelector('span').textContent = 'Live View';
+                } else {
+                    liveView.classList.add('collapsed');
+                    icon.className = 'fas fa-eye-slash';
+                    toggleButton.querySelector('span').textContent = 'Show Live';
+                }
+            }
+
+            async start() {
+                try {
+                    this.mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: {
+                            echoCancellation: true,
+                            noiseSuppression: true,
+                            autoGainControl: true,
+                            sampleRate: 16000
+                        } 
+                    });
+                    
+                    this.setupAudioVisualization();
+                    this.setupSpeechRecognition();
+                    this.recognition.start();
+                    
+                    this.sessionStartTime = Date.now();
+                    this.startSessionTimer();
+                    
+                } catch (error) {
+                    this.showError('Microphone access denied: ' + error.message);
+                }
+            }
+
+            setupAudioVisualization() {
+                this.audioContext = new AudioContext();
+                const source = this.audioContext.createMediaStreamSource(this.mediaStream);
+                const analyser = this.audioContext.createAnalyser();
+                
+                analyser.fftSize = 256;
+                source.connect(analyser);
+                
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                
+                const updateVisualizer = () => {
+                    if (!this.isRecording) return;
+                    
+                    analyser.getByteFrequencyData(dataArray);
+                    
+                    let sum = 0;
+                    for (let i = 0; i < bufferLength; i++) {
+                        sum += dataArray[i];
+                    }
+                    const average = sum / bufferLength;
+                    
+                    this.updateAudioBars(average);
+                    requestAnimationFrame(updateVisualizer);
+                };
+                
+                updateVisualizer();
+            }
+
+            updateAudioBars(level) {
+                const audioBars = document.querySelectorAll('.audio-bar');
+                const normalizedLevel = Math.min(level / 60, 1);
+                
+                audioBars.forEach((bar, index) => {
+                    const barHeight = Math.max(2, normalizedLevel * 16 * (index + 1) / audioBars.length);
+                    bar.style.height = `${barHeight}px`;
+                    bar.style.opacity = normalizedLevel > (index / audioBars.length) ? '1' : '0.3';
+                });
+            }
+
+            setupSpeechRecognition() {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                
+                if (!SpeechRecognition) {
+                    this.showError('Speech recognition not supported. Please use Chrome or Safari.');
+                    return;
+                }
+
+                this.recognition = new SpeechRecognition();
+                this.recognition.continuous = true;
+                this.recognition.interimResults = true;
+                this.recognition.lang = 'en-US';
+
+                this.recognition.onresult = (event) => {
+                    this.processResults(event);
+                };
+
+                this.recognition.onstart = () => {
+                    this.isRecording = true;
+                    this.updateUI();
+                    this.clearWordStream();
+                };
+
+                this.recognition.onend = () => {
+                    if (this.isRecording) {
+                        setTimeout(() => {
+                            if (this.isRecording && this.recognition) {
+                                this.recognition.start();
+                            }
+                        }, 100);
+                    }
+                };
+
+                this.recognition.onerror = (event) => {
+                    if (event.error === 'not-allowed') {
+                        this.showError('Microphone permission denied');
+                        this.stop();
+                    }
+                };
+            }
+
+            processResults(event) {
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const result = event.results[i];
+                    const transcript = result[0].transcript;
+                    const confidence = result[0].confidence || 0.9;
+                    const isFinal = result.isFinal;
+                    
+                    if (transcript.trim().length === 0) continue;
+                    
+                    if (isFinal) {
+                        this.addFinalWords(transcript, confidence);
+                        this.removeTypingIndicator();
+                        this.updateConfidenceMetrics(confidence);
+                        this.analyzeForCoaching(transcript);
+                    } else {
+                        this.showInterimWords(transcript);
+                    }
+                }
+            }
+
+            showInterimWords(transcript) {
+                this.removeInterimWords();
+                
+                const words = transcript.trim().split(/\s+/);
+                const wordStream = document.getElementById('wordStream');
+                
+                words.forEach((word, index) => {
+                    if (word.length > 0) {
+                        const wordElement = this.createWordElement(word, 'interim');
+                        wordStream.appendChild(wordElement);
+                    }
+                });
+                
+                this.addTypingIndicator();
+                this.scrollToBottom();
+            }
+
+            addFinalWords(transcript, confidence) {
+                this.removeInterimWords();
+                
+                const words = transcript.trim().split(/\s+/);
+                const wordStream = document.getElementById('wordStream');
+                
+                words.forEach((word) => {
+                    if (word.length > 0) {
+                        const wordElement = this.createWordElement(word, 'final', confidence);
+                        wordStream.appendChild(wordElement);
+                        this.wordCount++;
+                        this.currentSentence.push(word);
+                    }
+                });
+                
+                // Add words to sentence buffer for better sentence assembly
+                words.forEach((word) => {
+                    if (word.length > 0) {
+                        this.sentenceBuffer.push(word);
+                    }
+                });
+                
+                // Clear existing sentence timeout
+                if (this.sentenceTimeout) {
+                    clearTimeout(this.sentenceTimeout);
+                }
+                
+                // Set timeout to complete sentence if no new words arrive
+                this.sentenceTimeout = setTimeout(() => {
+                    if (this.sentenceBuffer.length > 0) {
+                        this.processSentenceBuffer();
+                    }
+                }, 2000);
+                
+                if (this.isSentenceEnd(transcript)) {
+                    this.processSentenceBuffer();
+                }
+                
+                this.updateStats();
+                this.scrollToBottom();
+            }
+
+            createWordElement(word, type, confidence = 0.9) {
+                const wordElement = document.createElement('span');
+                wordElement.className = `word ${type}`;
+                if (type === 'final' && confidence > 0.9) {
+                    wordElement.classList.add('high-confidence');
+                }
+                wordElement.textContent = word;
+                return wordElement;
+            }
+
+            removeInterimWords() {
+                const wordStream = document.getElementById('wordStream');
+                const interimWords = wordStream.querySelectorAll('.word.interim');
+                interimWords.forEach(word => word.remove());
+                this.removeTypingIndicator();
+            }
+
+            addTypingIndicator() {
+                if (this.typingIndicator) return;
+                
+                const wordStream = document.getElementById('wordStream');
+                this.typingIndicator = document.createElement('div');
+                this.typingIndicator.className = 'typing-indicator';
+                this.typingIndicator.innerHTML = `
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                `;
+                wordStream.appendChild(this.typingIndicator);
+            }
+
+            removeTypingIndicator() {
+                if (this.typingIndicator) {
+                    this.typingIndicator.remove();
+                    this.typingIndicator = null;
+                }
+            }
+
+            isSentenceEnd(text) {
+                return /[.!?]$/.test(text.trim()) || this.currentSentence.length > 15;
+            }
+
+            completeSentence() {
+                if (this.currentSentence.length === 0) return;
+                
+                const wordStream = document.getElementById('wordStream');
+                const sentenceBreak = document.createElement('div');
+                sentenceBreak.className = 'sentence-break';
+                wordStream.appendChild(sentenceBreak);
+                
+                this.sentenceCount++;
+                this.currentSentence = [];
+            }
+
+            updateConfidenceMetrics(confidence) {
+                this.confidenceSum += confidence;
+                this.confidenceCount++;
+            }
+
+            updateStats() {
+                document.getElementById('wordCount').textContent = this.wordCount;
+                document.getElementById('sentenceCount').textContent = this.sentenceCount;
+                
+                if (this.confidenceCount > 0) {
+                    const avgConfidence = Math.round((this.confidenceSum / this.confidenceCount) * 100);
+                    document.getElementById('confidenceAvg').textContent = `${avgConfidence}%`;
+                }
+            }
+
+            startSessionTimer() {
+                this.sessionTimer = setInterval(() => {
+                    this.updateSessionTimer();
+                }, 1000);
+            }
+
+            updateSessionTimer() {
+                if (!this.sessionStartTime) {
+                    document.getElementById('sessionTime').textContent = '00:00';
+                    return;
+                }
+                
+                const elapsed = Math.floor((Date.now() - this.sessionStartTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                document.getElementById('sessionTime').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            clearWordStream() {
+                const wordStream = document.getElementById('wordStream');
+                const emptyState = wordStream.querySelector('.empty-state');
+                if (emptyState) {
+                    wordStream.innerHTML = '';
+                }
+                
+                this.wordCount = 0;
+                this.sentenceCount = 0;
+                this.confidenceSum = 0;
+                this.confidenceCount = 0;
+                this.currentSentence = [];
+                this.updateStats();
+            }
+
+            scrollToBottom() {
+                const container = document.querySelector('.flowing-container');
+                container.scrollTop = container.scrollHeight;
+            }
+
+            analyzeForCoaching(text) {
+                const lowerText = text.toLowerCase();
+                
+                // Track which mappings have been triggered to avoid duplicates
+                const triggeredMappings = new Set();
+                
+                // Check content mappings first
+                let foundMapping = false;
+                for (const mapping of this.contentMappings) {
+                    if (!triggeredMappings.has(mapping.id)) {
+                        const matchedKeyword = this.findMatchedKeyword(lowerText, mapping.keywords, mapping.fuzzy);
+                        if (matchedKeyword) {
+                            const typeInfo = this.getMappingTypeInfo(mapping.type);
+                            const titleWithKeyword = `${typeInfo.title} (${matchedKeyword})`;
+                            this.addCoaching(titleWithKeyword, mapping.content, typeInfo.style, typeInfo.icon, mapping.id);
+                            triggeredMappings.add(mapping.id);
+                            foundMapping = true;
+                        }
+                    }
+                }
+                
+                // Default coaching rules if no mapping matched
+                if (!foundMapping) {
+                    if (lowerText.includes('price') || lowerText.includes('cost') || lowerText.includes('budget')) {
+                        this.addCoaching('Price Objection', 'Focus on value and ROI. Ask about the cost of not solving the problem.', 'objection', 'fas fa-dollar-sign');
+                    }
+                    
+                    if (lowerText.includes('think about') || lowerText.includes('consider')) {
+                        this.addCoaching('Closing Opportunity', 'Perfect timing to address concerns and move forward.', 'opportunity', 'fas fa-handshake');
+                    }
+                    
+                    if (lowerText.includes('competitor') || lowerText.includes('compare')) {
+                        this.addCoaching('Competitive Situation', 'Highlight unique differentiators and proven results.', 'competitive', 'fas fa-trophy');
+                    }
+                }
+            }
+            
+            getMappingTypeInfo(type) {
+                const typeInfo = {
+                    hint: { title: '💡 Hint', style: 'opportunity', icon: 'fas fa-lightbulb' },
+                    compintel: { title: '🎯 Competitive Intel', style: 'competitive', icon: 'fas fa-crosshairs' },
+                    keyword: { title: '🔑 Keyword Response', style: 'opportunity', icon: 'fas fa-key' },
+                    objection: { title: '🛡️ Objection Handler', style: 'objection', icon: 'fas fa-shield-alt' },
+                    closing: { title: '🤝 Closing Technique', style: 'opportunity', icon: 'fas fa-handshake' }
+                };
+                return typeInfo[type] || { title: '📝 Coaching', style: 'opportunity', icon: 'fas fa-clipboard' };
+            }
+
+            addCoaching(title, text, type, iconClass, mappingId = null) {
+                const coachingGrid = document.getElementById('coachingGrid');
+                
+                // Clear empty state
+                const emptyState = coachingGrid.querySelector('.empty-state');
+                if (emptyState) {
+                    coachingGrid.innerHTML = '';
+                }
+                
+                // Check for duplicate cards in the last 10 seconds
+                const now = Date.now();
+                const cardId = `${title}-${mappingId || text.substring(0, 20)}`;
+                
+                // Initialize recent cards tracking if needed
+                if (!this.recentCards) {
+                    this.recentCards = new Map();
+                }
+                
+                // Check if this card was recently added
+                if (this.recentCards.has(cardId)) {
+                    const lastAdded = this.recentCards.get(cardId);
+                    if (now - lastAdded < 10000) { // 10 second duplicate prevention
+                        return;
+                    }
+                }
+                
+                this.recentCards.set(cardId, now);
+                
+                // Clean up old entries
+                for (const [id, timestamp] of this.recentCards.entries()) {
+                    if (now - timestamp > 30000) { // Remove entries older than 30 seconds
+                        this.recentCards.delete(id);
+                    }
+                }
+
+                const card = document.createElement('div');
+                card.className = 'coaching-card';
+                card.setAttribute('data-card-id', cardId);
+                card.innerHTML = `
+                    <div class="coaching-header">
+                        <div class="coaching-icon ${type}">
+                            <i class="${iconClass}"></i>
+                        </div>
+                        <div class="coaching-title">${title}</div>
+                    </div>
+                    <div class="coaching-text">${text}</div>
+                    <div class="coaching-timestamp">
+                        <i class="fas fa-clock"></i>
+                        <span>${new Date().toLocaleTimeString()}</span>
+                    </div>
+                `;
+
+                coachingGrid.appendChild(card);
+                
+                // Keep only last 6 coaching cards
+                while (coachingGrid.children.length > 6) {
+                    coachingGrid.removeChild(coachingGrid.firstChild);
+                }
+            }
+
+            showError(message) {
+                // Could implement a toast notification here
+                alert(message);
+            }
+
+            stop() {
+                this.isRecording = false;
+                
+                this.removeTypingIndicator();
+                
+                if (this.recognition) {
+                    this.recognition.stop();
+                    this.recognition = null;
+                }
+                
+                if (this.audioContext) {
+                    this.audioContext.close();
+                    this.audioContext = null;
+                }
+                
+                if (this.mediaStream) {
+                    this.mediaStream.getTracks().forEach(track => track.stop());
+                    this.mediaStream = null;
+                }
+                
+                if (this.sessionTimer) {
+                    clearInterval(this.sessionTimer);
+                    this.sessionTimer = null;
+                }
+                
+                this.updateUI();
+            }
+
+            processSentenceBuffer() {
+                if (this.sentenceBuffer.length === 0) return;
+                
+                const sentence = this.sentenceBuffer.join(' ');
+                
+                // Analyze complete sentence
+                if (sentence.length > 5) {
+                    this.analyzeForCoaching(sentence);
+                }
+                
+                // Complete the sentence visually
+                this.completeSentence();
+                
+                // Clear buffer
+                this.sentenceBuffer = [];
+                
+                if (this.sentenceTimeout) {
+                    clearTimeout(this.sentenceTimeout);
+                    this.sentenceTimeout = null;
+                }
+            }
+
+            updateUI() {
+                const statusIndicator = document.getElementById('statusIndicator');
+                const startButton = document.getElementById('startButton');
+                const stopButton = document.getElementById('stopButton');
+                const audioVisualizer = document.getElementById('audioVisualizer');
+
+                if (this.isRecording) {
+                    statusIndicator.className = 'status-indicator status-active';
+                    statusIndicator.innerHTML = '<div class="status-dot"></div><span>Recording</span>';
+                    startButton.style.display = 'none';
+                    stopButton.style.display = 'flex';
+                    audioVisualizer.style.display = 'flex';
+                } else {
+                    statusIndicator.className = 'status-indicator';
+                    statusIndicator.innerHTML = '<div class="status-dot"></div><span>Ready</span>';
+                    startButton.style.display = 'flex';
+                    stopButton.style.display = 'none';
+                    audioVisualizer.style.display = 'none';
+                }
+            }
+
+            // Content Mapping Methods
+            toggleContentMapping() {
+                const panel = document.getElementById('contentMappingPanel');
+                const button = document.getElementById('toggleContentMapping');
+                const icon = button.querySelector('i');
+                const coachingSection = document.querySelector('.coaching-section');
+                
+                this.mappingPanelVisible = !this.mappingPanelVisible;
+                
+                if (this.mappingPanelVisible) {
+                    panel.classList.remove('collapsed');
+                    icon.className = 'fas fa-times';
+                    button.querySelector('span').textContent = 'Close Map';
+                    // Hide coaching section when mapping panel is open
+                    coachingSection.style.display = 'none';
+                } else {
+                    panel.classList.add('collapsed');
+                    icon.className = 'fas fa-cogs';
+                    button.querySelector('span').textContent = 'Content Map';
+                    // Show coaching section when mapping panel is closed
+                    coachingSection.style.display = 'flex';
+                }
+            }
+
+            addContentMapping() {
+                const typeSelect = document.getElementById('mappingType');
+                const keywordsInput = document.getElementById('mappingKeywords');
+                const contentInput = document.getElementById('mappingContent');
+                const fuzzyCheckbox = document.getElementById('fuzzyMatching');
+                
+                const type = typeSelect.value;
+                const keywords = keywordsInput.value.trim();
+                const content = contentInput.value.trim();
+                
+                if (!keywords || !content) {
+                    alert('Please enter both keywords and content.');
+                    return;
+                }
+                
+                const mapping = {
+                    id: Date.now(),
+                    type: type,
+                    keywords: keywords.split(',').map(k => k.trim().toLowerCase()),
+                    content: content,
+                    fuzzy: fuzzyCheckbox.checked
+                };
+                
+                this.contentMappings.push(mapping);
+                this.saveContentMappings();
+                this.renderContentMappings();
+                
+                // Clear form
+                keywordsInput.value = '';
+                contentInput.value = '';
+                
+                console.log('Mapping added:', mapping);
+                console.log('Total mappings:', this.contentMappings.length);
+            }
+
+            deleteContentMapping(id) {
+                this.contentMappings = this.contentMappings.filter(mapping => mapping.id !== id);
+                this.saveContentMappings();
+                this.renderContentMappings();
+            }
+
+            renderContentMappings() {
+                const mappingsList = document.getElementById('mappingsList');
+                
+                const countElement = document.getElementById('mappingCount');
+                if (countElement) {
+                    countElement.textContent = `${this.contentMappings.length} mapping${this.contentMappings.length !== 1 ? 's' : ''}`;
+                }
+                
+                if (this.contentMappings.length === 0) {
+                    mappingsList.innerHTML = `
+                        <div class="empty-state" style="padding: 3rem 2rem; text-align: center; color: #666666;">
+                            <div style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;">📦</div>
+                            <div style="font-size: 0.9rem;">No content mappings configured yet</div>
+                            <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">Add keywords and coaching content to get started</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                mappingsList.innerHTML = this.contentMappings.map(mapping => {
+                    const typeIcons = {
+                        hint: '💡',
+                        compintel: '🎯',
+                        keyword: '🔑',
+                        objection: '🛡️',
+                        closing: '🤝'
+                    };
+                    const typeNames = {
+                        hint: 'Hint',
+                        compintel: 'CompIntel',
+                        keyword: 'Keyword',
+                        objection: 'Objection',
+                        closing: 'Closing'
+                    };
+                    return `
+                        <div class="mapping-item" data-id="${mapping.id}">
+                            <button class="delete-mapping" data-mapping-id="${mapping.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                                <span style="font-size: 1.2rem;">${typeIcons[mapping.type] || '📝'}</span>
+                                <span style="font-size: 0.9rem; color: #ffffff; font-weight: 600;">${typeNames[mapping.type] || 'General'}</span>
+                            </div>
+                            <div class="mapping-keywords">
+                                Keywords: ${mapping.keywords.join(', ')} ${mapping.fuzzy ? '• Fuzzy matching enabled' : ''}
+                            </div>
+                            <div class="mapping-content-text">${mapping.content}</div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-mapping').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const mappingId = parseInt(e.currentTarget.getAttribute('data-mapping-id'));
+                        this.deleteContentMapping(mappingId);
+                    });
+                });
+            }
+
+            findMatchedKeyword(text, keywords, fuzzy) {
+                for (const keyword of keywords) {
+                    if (fuzzy) {
+                        if (this.fuzzyMatch(text, keyword)) {
+                            return keyword;
+                        }
+                    } else {
+                        if (text.includes(keyword)) {
+                            return keyword;
+                        }
+                    }
+                }
+                return null;
+            }
+            
+            matchesKeywords(text, keywords, fuzzy) {
+                return this.findMatchedKeyword(text, keywords, fuzzy) !== null;
+            }
+
+            fuzzyMatch(text, keyword) {
+                // Exact match
+                if (text.includes(keyword)) {
+                    return true;
+                }
+                
+                // Remove spaces and special characters for fuzzy matching
+                const cleanText = text.replace(/[\s\-_\.]/g, '').toLowerCase();
+                const cleanKeyword = keyword.replace(/[\s\-_\.]/g, '').toLowerCase();
+                
+                if (cleanText.includes(cleanKeyword)) {
+                    return true;
+                }
+                
+                // Split compound words (e.g., "incidentio" matches "incident io")
+                const words = keyword.split(/[\s\-_\.]/);
+                if (words.length > 1) {
+                    const joinedWords = words.join('').toLowerCase();
+                    if (cleanText.includes(joinedWords)) {
+                        return true;
+                    }
+                }
+                
+                // Levenshtein distance for very close matches
+                if (keyword.length > 4) {
+                    const distance = this.levenshteinDistance(cleanKeyword, cleanText);
+                    const threshold = Math.floor(keyword.length * 0.2); // 20% difference allowed
+                    if (distance <= threshold && cleanText.includes(cleanKeyword.substring(0, 3))) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+
+            levenshteinDistance(str1, str2) {
+                // Find the best substring match
+                let minDistance = Infinity;
+                
+                // Check all substrings of str2 that are similar length to str1
+                const len1 = str1.length;
+                for (let i = 0; i <= str2.length - len1; i++) {
+                    const substring = str2.substr(i, len1 + 2); // Allow some flexibility
+                    const distance = this.calculateEditDistance(str1, substring);
+                    minDistance = Math.min(minDistance, distance);
+                }
+                
+                return minDistance;
+            }
+            
+            calculateEditDistance(str1, str2) {
+                const matrix = [];
+                
+                for (let i = 0; i <= str2.length; i++) {
+                    matrix[i] = [i];
+                }
+                
+                for (let j = 0; j <= str1.length; j++) {
+                    matrix[0][j] = j;
+                }
+                
+                for (let i = 1; i <= str2.length; i++) {
+                    for (let j = 1; j <= str1.length; j++) {
+                        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                            matrix[i][j] = matrix[i - 1][j - 1];
+                        } else {
+                            matrix[i][j] = Math.min(
+                                matrix[i - 1][j - 1] + 1,
+                                matrix[i][j - 1] + 1,
+                                matrix[i - 1][j] + 1
+                            );
+                        }
+                    }
+                }
+                
+                return matrix[str2.length][str1.length];
+            }
+
+            saveContentMappings() {
+                localStorage.setItem('salescoach_content_mappings', JSON.stringify(this.contentMappings));
+            }
+
+            loadContentMappings() {
+                const stored = localStorage.getItem('salescoach_content_mappings');
+                if (stored) {
+                    this.contentMappings = JSON.parse(stored);
+                    this.renderContentMappings();
+                }
+            }
+        }
+
+        // Initialize
+        const app = new Coachly();
+    </script>
+</body>
+</html>
