@@ -1,6 +1,6 @@
 # Heads Up User Guide
 
-![Heads Up Screenshot](images/screenshot.png)
+<img src="images/screenshot.png" alt="Heads Up Screenshot" width="600">
 
 It's a coach in your Chrome browser.
 
