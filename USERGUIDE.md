@@ -1,6 +1,8 @@
 # Heads Up User Guide
 
-<img src="images/screenshot.png" alt="Heads Up Screenshot" width="300">
+<p align="center">
+  <img src="images/screenshot.png" alt="Heads Up Screenshot" width="300">
+</p>
 
 It's a coach in your Chrome browser.
 
