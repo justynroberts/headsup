@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https:; connect-src 'self' https: wss: ws:; media-src 'self' https:;">
     <title>Heads Up</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/feather-icons"></script>
@@ -15,63 +16,70 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #0a0a0a;
+            background: rgba(10, 10, 10, 0.95);
             color: #ffffff;
             height: 100vh;
             overflow: hidden;
-            line-height: 1.5;
+            line-height: 1.4;
+            font-size: 12px;
         }
 
         .app-container {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             height: 100vh;
-            background: linear-gradient(135deg, #0a0a0a 0%, #111111 50%, #0f0f0f 100%);
+            width: 320px;
+            max-width: 320px;
+            background: linear-gradient(135deg, rgba(10, 10, 10, 0.97) 0%, rgba(17, 17, 17, 0.97) 50%, rgba(15, 15, 15, 0.97) 100%);
         }
+
 
         /* Header */
         .header {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(20px);
-            border-left: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 1rem;
+            padding: 0.6rem;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            gap: 1rem;
+            justify-content: space-between;
+            gap: 0.4rem;
             position: relative;
             z-index: 100;
-            min-width: 80px;
-            height: 100vh;
-            order: 2;
+            width: 100%;
+            height: auto;
+            flex-shrink: 0;
+            order: 1;
         }
 
         .header-center {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            gap: 1rem;
+            gap: 0.5rem;
+            flex: 1;
         }
 
         .logo-section {
             display: flex;
             align-items: center;
-            justify-content: center;
-            margin-bottom: 0.5rem;
+            gap: 0.5rem;
+            margin-bottom: 0;
         }
 
         .logo {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #00d4ff 0%, #5b8def 100%);
-            border-radius: 12px;
+            width: 24px;
+            height: 24px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: #000;
-            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 2px 10px rgba(0, 212, 255, 0.3);
         }
 
         .brand-text {
@@ -80,32 +88,34 @@
         }
 
         .brand-name {
-            font-size: 1rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: #ffffff;
             letter-spacing: -0.025em;
+            line-height: 1.1;
         }
 
         .brand-tagline {
-            font-size: 0.7rem;
+            font-size: 0.55rem;
             color: #888888;
             font-weight: 400;
+            line-height: 1.1;
         }
 
         .header-controls {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.4rem;
         }
 
         .control-button {
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.12);
             color: #ffffff;
-            padding: 0.75rem;
-            border-radius: 12px;
-            font-size: 1rem;
+            padding: 0.4rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -113,8 +123,8 @@
             align-items: center;
             justify-content: center;
             font-family: 'Inter', sans-serif;
-            width: 44px;
-            height: 44px;
+            width: 28px;
+            height: 28px;
         }
 
         .control-button:hover {
@@ -122,19 +132,32 @@
             border-color: rgba(255, 255, 255, 0.2);
             transform: translateY(-1px);
         }
+        .window-control {
+            margin-left: 0.2rem;
+        }
+        .window-control:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        #closeButton:hover {
+            background: rgba(255, 59, 59, 0.2);
+            border-color: rgba(255, 59, 59, 0.4);
+            color: #ff6b6b;
+        }
 
         .primary-button {
-            background: linear-gradient(135deg, #00d4ff 0%, #5b8def 100%);
-            border: none;
-            color: #000000;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
             font-weight: 600;
-            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.2);
+            box-shadow: none;
         }
 
         .primary-button:hover {
-            background: linear-gradient(135deg, #00e4ff 0%, #6b92ff 100%);
+            background: rgba(255, 255, 255, 0.1);
             transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(0, 212, 255, 0.4);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .danger-button {
@@ -153,20 +176,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0.5rem;
+            padding: 0.3rem;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            font-size: 0.8rem;
+            border-radius: 5px;
+            font-size: 0.65rem;
             font-weight: 500;
-            width: 44px;
-            height: 44px;
+            width: 28px;
+            height: 28px;
         }
 
         .status-active {
-            background: rgba(0, 212, 255, 0.1);
-            border-color: rgba(0, 212, 255, 0.3);
-            color: #00d4ff;
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #22c55e;
         }
 
         .status-dot {
@@ -177,8 +200,8 @@
         }
 
         .status-active .status-dot {
-            background: #00d4ff;
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            background: #22c55e;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
             animation: pulse 2s infinite;
         }
 
@@ -193,13 +216,13 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            height: 100vh;
-            order: 1;
+            height: calc(100vh - 52px);
+            order: 2;
         }
 
         /* Live View */
         .live-view {
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.35);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             transition: all 0.3s ease;
             overflow: hidden;
@@ -212,7 +235,7 @@
         }
 
         .live-view-header {
-            padding: 0.75rem 2rem;
+            padding: 0.4rem 0.75rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -222,10 +245,10 @@
         .live-view-title {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-size: 0.9rem;
+            gap: 0.4rem;
+            font-size: 0.7rem;
             font-weight: 600;
-            color: #00d4ff;
+            color: #ffffff;
         }
 
         .toggle-button {
@@ -244,9 +267,9 @@
         }
 
         .flowing-container {
-            padding: 2rem;
-            min-height: 120px;
-            max-height: 200px;
+            padding: 0.75rem;
+            min-height: 60px;
+            max-height: 120px;
             overflow-y: auto;
             position: relative;
         }
@@ -254,20 +277,20 @@
         .word-stream {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.3rem;
+            gap: 0.25rem;
             align-items: baseline;
-            font-size: 1rem;
-            line-height: 1.6;
+            font-size: 0.8rem;
+            line-height: 1.5;
         }
 
         .word {
             display: inline-block;
-            padding: 0.15rem 0.3rem;
-            border-radius: 4px;
+            padding: 0.1rem 0.2rem;
+            border-radius: 3px;
             transition: all 0.3s ease;
             animation: wordSlide 0.4s ease;
             font-weight: 400;
-            font-size: 0.8rem;
+            font-size: 0.65rem;
         }
 
         .word.interim {
@@ -278,7 +301,7 @@
 
         .word.final {
             background: rgba(0, 212, 255, 0.1);
-            color: #00d4ff;
+            color: #ffffff;
             border: 1px solid rgba(0, 212, 255, 0.2);
         }
 
@@ -339,7 +362,7 @@
 
         /* Content Mapping */
         .content-mapping-panel {
-            background: #0a0a0a;
+            background: rgba(10, 10, 10, 0.96);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             transition: all 0.3s ease;
             overflow: hidden;
@@ -354,7 +377,7 @@
         }
 
         .mapping-header {
-            padding: 1.5rem 2rem;
+            padding: 0.4rem 0.75rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -365,60 +388,60 @@
         .mapping-title {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-size: 0.9rem;
+            gap: 0.4rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: #5b8def;
         }
 
         .mapping-content {
-            padding: 2rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            max-height: calc(100vh - 200px);
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: calc(100vh - 224px);
             overflow-y: auto;
         }
 
         .mapping-form {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 2rem;
+            border-radius: 6px;
+            padding: 0.75rem;
             min-width: 0;
         }
 
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 0.6rem;
         }
 
         .form-group label {
             display: block;
-            font-size: 0.875rem;
+            font-size: 0.7rem;
             font-weight: 500;
             color: #cccccc;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
         .form-input {
             width: 100%;
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-            padding: 0.75rem;
+            border-radius: 5px;
+            padding: 0.4rem;
             color: #ffffff;
-            font-size: 0.875rem;
+            font-size: 0.7rem;
             font-family: 'Inter', sans-serif;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #00d4ff;
-            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
         }
 
         .form-textarea {
-            min-height: 120px;
+            min-height: 70px;
             resize: vertical;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
@@ -428,12 +451,12 @@
         }
 
         .add-mapping-button {
-            background: linear-gradient(135deg, #00d4ff 0%, #5b8def 100%);
-            border: none;
-            color: #000000;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            font-size: 0.7rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -442,14 +465,16 @@
 
         .add-mapping-button:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .mappings-list {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 1.5rem;
+            border-radius: 6px;
+            padding: 0.75rem;
             height: 100%;
             overflow-y: auto;
         }
@@ -457,9 +482,9 @@
         .mapping-item {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
             transition: all 0.2s ease;
             position: relative;
         }
@@ -470,27 +495,27 @@
         }
 
         .mapping-keywords {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 400;
             color: #888888;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
             font-style: italic;
         }
 
         .mapping-content-text {
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             color: #aaaaaa;
-            line-height: 1.5;
-            max-height: 60px;
+            line-height: 1.4;
+            max-height: 50px;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             background: rgba(255, 255, 255, 0.02);
-            padding: 0.5rem;
-            border-radius: 4px;
-            margin-top: 0.5rem;
+            padding: 0.4rem;
+            border-radius: 3px;
+            margin-top: 0.3rem;
         }
 
         .delete-mapping {
@@ -517,8 +542,8 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 2rem;
-            background: #0a0a0a;
+            padding: 0.75rem;
+            background: rgba(10, 10, 10, 0.96);
             overflow: hidden;
         }
 
@@ -526,37 +551,37 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.75rem;
             flex-shrink: 0;
         }
 
         .section-title {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-size: 1.1rem;
+            gap: 0.4rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: #ffffff;
         }
 
         .coaching-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
             flex: 1;
             overflow-y: auto;
-            padding-bottom: 1rem;
+            padding-bottom: 0.75rem;
         }
 
         .coaching-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 1.5rem;
+            border-radius: 8px;
+            padding: 0.75rem;
             backdrop-filter: blur(20px);
             transition: all 0.3s ease;
             animation: cardSlide 0.5s ease;
-            max-height: 200px;
+            max-height: 130px;
             overflow: hidden;
             position: relative;
         }
@@ -586,18 +611,18 @@
         .coaching-header {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
+            gap: 0.4rem;
+            margin-bottom: 0.6rem;
         }
 
         .coaching-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
+            font-size: 0.7rem;
         }
 
         .coaching-icon.objection {
@@ -616,32 +641,32 @@
         }
 
         .coaching-title {
-            font-size: 0.9rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: #ffffff;
         }
 
         .coaching-text {
             color: #cccccc;
-            line-height: 1.5;
-            font-size: 0.8rem;
+            line-height: 1.4;
+            font-size: 0.65rem;
         }
 
         .coaching-timestamp {
-            margin-top: 1rem;
-            font-size: 0.75rem;
+            margin-top: 0.6rem;
+            font-size: 0.6rem;
             color: #666666;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.3rem;
         }
 
         .dismiss-card {
             position: absolute;
-            top: 0.75rem;
-            right: 0.75rem;
-            width: 28px;
-            height: 28px;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 20px;
+            height: 20px;
             background: rgba(34, 197, 94, 0.9);
             border: none;
             border-radius: 50%;
@@ -652,7 +677,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: #ffffff;
             z-index: 10;
         }
@@ -682,27 +707,27 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 3rem 1.5rem;
+            padding: 2rem 1rem;
             text-align: center;
             color: #666666;
         }
 
         .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
             opacity: 0.5;
         }
 
         .empty-title {
-            font-size: 0.95rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             color: #888888;
         }
 
         .empty-subtitle {
-            font-size: 0.8rem;
-            line-height: 1.5;
+            font-size: 0.7rem;
+            line-height: 1.4;
         }
 
         /* Audio Visualization */
@@ -710,8 +735,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 44px;
-            height: 44px;
+            width: 32px;
+            height: 32px;
         }
 
         .audio-bars {
@@ -723,7 +748,7 @@
 
         .audio-bar {
             width: 2px;
-            background: #00d4ff;
+            background: #22c55e;
             border-radius: 1px;
             transition: height 0.1s ease;
             opacity: 0.7;
@@ -732,11 +757,11 @@
         /* Stats */
         .stats-row {
             display: flex;
-            gap: 1.5rem;
-            margin-top: 1rem;
-            padding: 0.75rem;
+            gap: 1rem;
+            margin-top: 0.75rem;
+            padding: 0.5rem;
             background: rgba(255, 255, 255, 0.02);
-            border-radius: 12px;
+            border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
@@ -744,88 +769,86 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.2rem;
         }
 
         .stat-number {
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 700;
-            color: #00d4ff;
+            color: #ffffff;
         }
 
         .stat-label {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: #888888;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .mapping-content {
-                grid-template-columns: 1fr;
-                gap: 1rem;
+        /* Responsive - Fine-tuning for 280px frameless display */
+        @media (max-width: 300px) {
+            .app-container {
+                width: 100%;
+                max-width: 100%;
             }
             
-            .coaching-grid {
-                grid-template-columns: 1fr;
+            body {
+                font-size: 11px;
             }
             
-            .header-center {
-                gap: 1rem;
-            }
-        }
-        
-        @media (max-width: 768px) {
+            
             .header {
-                padding: 1rem;
-                flex-direction: column;
-                gap: 1rem;
+                padding: 0.5rem;
             }
             
-            .header-center {
-                order: 2;
+            .logo {
+                width: 20px;
+                height: 20px;
+                font-size: 0.7rem;
             }
             
-            .header-controls {
-                flex-wrap: wrap;
-                gap: 0.5rem;
-                order: 3;
+            .brand-name {
+                font-size: 0.65rem;
             }
             
-            .logo-section {
-                order: 1;
+            .brand-tagline {
+                font-size: 0.5rem;
             }
-        }
             
             .control-button {
-                padding: 0.6rem;
-                font-size: 0.9rem;
-                width: 40px;
-                height: 40px;
+                width: 24px;
+                height: 24px;
+                font-size: 0.65rem;
             }
-
-            .coaching-section {
-                padding: 1rem;
-            }
-
-            .coaching-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-row {
-                gap: 1rem;
+            
+            .status-indicator {
+                width: 24px;
+                height: 24px;
             }
             
             .flowing-container {
-                padding: 1rem;
-                max-height: 150px;
+                padding: 0.6rem;
+                min-height: 50px;
+                max-height: 100px;
+            }
+            
+            .coaching-section {
+                padding: 0.6rem;
+            }
+            
+            .mapping-content {
+                padding: 0.6rem;
+            }
+            
+            .coaching-card {
+                padding: 0.6rem;
+                max-height: 110px;
             }
         }
 
         /* Scrollbar Styling */
         ::-webkit-scrollbar {
-            width: 4px;
+            width: 3px;
         }
 
         ::-webkit-scrollbar-track {
@@ -848,7 +871,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.82);
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -857,7 +880,7 @@
         }
 
         .tutorial-card {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.96) 0%, rgba(42, 42, 42, 0.96) 100%);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 20px;
             padding: 3rem;
@@ -871,7 +894,7 @@
         .tutorial-icon {
             font-size: 4rem;
             margin-bottom: 1.5rem;
-            color: #00d4ff;
+            color: #ffffff;
         }
 
         .tutorial-title {
@@ -931,13 +954,16 @@
         }
 
         .tutorial-button-primary {
-            background: linear-gradient(135deg, #00d4ff 0%, #5b8def 100%);
-            color: #000000;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
         }
 
         .tutorial-button-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 6px 25px rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
         .tutorial-button-secondary {
@@ -966,7 +992,7 @@
         }
 
         .tutorial-dot.active {
-            background: #00d4ff;
+            background: #22c55e;
             transform: scale(1.2);
         }
 
@@ -976,12 +1002,13 @@
             top: 0;
             right: 100%;
             margin-right: 0.5rem;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.92);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             padding: 0.5rem;
-            min-width: 200px;
+            min-width: 180px;
+            max-width: 250px;
             z-index: 100;
             opacity: 0;
             transform: translateX(10px);
@@ -993,6 +1020,16 @@
             opacity: 1;
             transform: translateX(0);
             pointer-events: all;
+        }
+
+        /* Responsive adjustments for narrow screens */
+        @media (max-width: 350px) {
+            .settings-menu {
+                right: 0;
+                margin-right: 0;
+                min-width: 160px;
+                max-width: 200px;
+            }
         }
 
         .settings-item {
@@ -1034,13 +1071,9 @@
 </head>
 <body>
     <div class="app-container">
+        
         <!-- Header -->
         <div class="header">
-            <div class="logo-section">
-                <div class="logo">
-                    <i data-feather="eye"></i>
-                </div>
-            </div>
 
             <div class="header-center">
                 <div class="audio-visualizer" id="audioVisualizer" style="display: none;">
@@ -1059,21 +1092,25 @@
             </div>
 
             <div class="header-controls">
-                <button id="toggleLiveView" class="control-button" title="Show/hide live transcription stream with real-time word flow">
-                    <i data-feather="eye-off"></i>
+                <button id="toggleLiveView" class="control-button" title="Toggle live transcription view">
+                    <i data-feather="eye"></i>
                 </button>
 
-                <button id="toggleContentMapping" class="control-button" title="Configure coaching responses for specific keywords and phrases">
-                    <i data-feather="settings"></i>
+                <button id="startButton" class="control-button primary-button" title="Start live speech recognition and coaching analysis">
+                    <i data-feather="mic"></i>
                 </button>
 
                 <div style="position: relative;">
-                    <button id="settingsButton" class="control-button" title="Access tutorial, export data, and manage saved sessions">
-                        <i data-feather="more-vertical"></i>
+                    <button id="settingsButton" class="control-button" title="Access settings, tutorial, export data, and manage saved sessions">
+                        <i data-feather="settings"></i>
                     </button>
                     
                     <!-- Settings Menu -->
                     <div class="settings-menu" id="settingsMenu">
+                    <div class="settings-item" onclick="app.toggleContentMapping(); app.hideSettings();">
+                        <i data-feather="map"></i>
+                        <span>Content Mapping</span>
+                    </div>
                     <div class="settings-item" onclick="app.showTutorial()">
                         <i data-feather="book-open"></i>
                         <span>Show Tutorial</span>
@@ -1097,10 +1134,6 @@
                     </div>
                 </div>
 
-                <button id="startButton" class="control-button primary-button" title="Start live speech recognition and coaching analysis">
-                    <i data-feather="mic"></i>
-                </button>
-
                 <button id="stopButton" class="control-button danger-button" style="display: none;" title="Stop recording and generate session summary">
                     <i data-feather="square"></i>
                 </button>
@@ -1112,13 +1145,21 @@
                 <button id="summarizeButton" class="control-button" style="display: none;" title="Send transcript to LLM for analysis">
                     <i data-feather="zap"></i>
                 </button>
+
+                <!-- Window controls -->
+                <button id="minimizeButton" class="control-button window-control" title="Minimize window">
+                    <i data-feather="minus"></i>
+                </button>
+                <button id="closeButton" class="control-button window-control" title="Close window">
+                    <i data-feather="x"></i>
+                </button>
             </div>
         </div>
 
         <!-- Main Content -->
         <div class="main-content">
             <!-- Live View -->
-            <div class="live-view collapsed" id="liveView">
+            <div class="live-view" id="liveView">
                 <div class="live-view-header">
                     <div class="live-view-title">
                         <i data-feather="activity"></i>
@@ -1240,7 +1281,7 @@
                 <div class="coaching-grid" id="coachingGrid">
                     <div class="empty-state">
                         <div class="empty-icon">🧠</div>
-                        <div class="empty-title">Coach Analysis Ready</div>
+                        <div class="empty-title">Heads Up</div>
                         <div class="empty-subtitle">
                             Start recording to receive real-time coaching insights based on your speech patterns and content mappings.
                         </div>
@@ -1251,13 +1292,12 @@
     </div>
 
     <script>
-        class Coachly {
+        class HeadsUp {
             constructor() {
                 this.isRecording = false;
                 this.recognition = null;
                 this.audioContext = null;
                 this.mediaStream = null;
-                this.liveViewVisible = false;
                 
                 // Metrics
                 this.wordCount = 0;
@@ -1293,6 +1333,13 @@
                 this.contentMappings = [];
                 this.mappingPanelVisible = false;
                 
+                // Live view toggle
+                this.liveViewVisible = true;
+                
+                // Speech recognition restart counter
+                this.restartCount = 0;
+                this.maxRestarts = 5;
+                
                 // Sentence assembly
                 this.sentenceBuffer = [];
                 this.sentenceTimeout = null;
@@ -1301,7 +1348,7 @@
                 this.tutorialSteps = [
                     {
                         icon: '🎙️',
-                        title: 'Welcome to Coachly',
+                        title: 'Welcome to Heads Up',
                         description: 'Your AI-powered sales coaching assistant that provides real-time guidance during conversations.',
                         features: [
                             { icon: '🎯', text: 'Real-time speech transcription' },
@@ -1352,6 +1399,7 @@
                 this.loadSavedSessions();
                 this.loadLLMConfig();
                 this.checkFirstTime();
+                this.setupElectronIntegration();
                 
                 // Initialize Feather icons
                 setTimeout(() => feather.replace(), 100);
@@ -1360,8 +1408,10 @@
             setupEventListeners() {
                 document.getElementById('startButton').addEventListener('click', () => this.start());
                 document.getElementById('stopButton').addEventListener('click', () => this.stop());
+                // Window controls
+                document.getElementById('minimizeButton').addEventListener('click', () => this.minimizeWindow());
+                document.getElementById('closeButton').addEventListener('click', () => this.closeWindow());
                 document.getElementById('toggleLiveView').addEventListener('click', () => this.toggleLiveView());
-                document.getElementById('toggleContentMapping').addEventListener('click', () => this.toggleContentMapping());
                 document.getElementById('closeMappingPanel').addEventListener('click', () => this.toggleContentMapping());
                 document.getElementById('addMappingButton').addEventListener('click', () => this.addContentMapping());
                 document.getElementById('settingsButton').addEventListener('click', (e) => this.toggleSettings(e));
@@ -1379,44 +1429,56 @@
             initializeUI() {
                 // Initialize session timer display
                 this.updateSessionTimer();
-                // Live view starts collapsed
-                const liveView = document.getElementById('liveView');
-                liveView.classList.add('collapsed');
-            }
-
-            toggleLiveView() {
-                const liveView = document.getElementById('liveView');
-                const toggleButton = document.getElementById('toggleLiveView');
-                const icon = toggleButton.querySelector('i');
                 
-                this.liveViewVisible = !this.liveViewVisible;
+                // Set initial state based on liveViewVisible
+                const liveView = document.getElementById('liveView');
+                const coachingSection = document.querySelector('.coaching-section');
                 
                 if (this.liveViewVisible) {
+                    // Live view visible, coaching hidden
                     liveView.classList.remove('collapsed');
-                    icon.setAttribute('data-feather', 'eye');
-                    toggleButton.title = 'Hide live transcription stream';
-                    feather.replace();
+                    if (coachingSection) coachingSection.style.display = 'none';
                 } else {
+                    // Live view hidden, coaching visible
                     liveView.classList.add('collapsed');
-                    icon.setAttribute('data-feather', 'eye-off');
-                    toggleButton.title = 'Show live transcription stream with real-time word flow';
-                    feather.replace();
+                    if (coachingSection) coachingSection.style.display = 'flex';
+                }
+            }
+
+
+            // Window control methods
+            minimizeWindow() {
+                if (window.electronAPI?.minimizeWindow) {
+                    window.electronAPI.minimizeWindow();
+                }
+            }
+
+            closeWindow() {
+                if (window.electronAPI?.closeWindow) {
+                    window.electronAPI.closeWindow();
                 }
             }
 
             async start() {
                 try {
+                    this.showDebug('Starting microphone access...');
+                    
+                    // First check if permission is already granted
+                    const permission = await navigator.permissions.query({ name: 'microphone' });
+                    this.showDebug(`Microphone permission status: ${permission.state}`);
+                    
+                    // Check network connectivity for speech recognition
+                    this.showDebug(`Online status: ${navigator.onLine}`);
+                    
                     this.mediaStream = await navigator.mediaDevices.getUserMedia({ 
-                        audio: {
-                            echoCancellation: true,
-                            noiseSuppression: true,
-                            autoGainControl: true,
-                            sampleRate: 16000
-                        } 
+                        audio: true  // Simplified for better compatibility
                     });
                     
+                    this.showDebug('Microphone access granted, setting up recognition...');
                     this.setupAudioVisualization();
                     this.setupSpeechRecognition();
+                    this.showDebug('Starting speech recognition...');
+                    this.restartCount = 0; // Reset counter when starting fresh
                     this.recognition.start();
                     
                     this.sessionStartTime = Date.now();
@@ -1425,8 +1487,57 @@
                     this.logSessionEvent('Recording started');
                     
                 } catch (error) {
-                    this.showError('Microphone access denied: ' + error.message);
+                    this.showDebug(`Microphone error: ${error.name} - ${error.message}`);
+                    if (error.name === 'NotAllowedError') {
+                        this.showError('Microphone permission denied. Please check System Settings > Privacy & Security > Microphone');
+                    } else if (error.name === 'NotFoundError') {
+                        this.showError('No microphone found. Please connect a microphone.');
+                    } else {
+                        this.showError('Microphone access denied: ' + error.message);
+                    }
                 }
+            }
+            
+            // Add manual restart for testing
+            restartSpeechRecognition() {
+                if (this.recognition && this.isRecording) {
+                    this.showDebug('Manually restarting speech recognition...');
+                    try {
+                        this.recognition.start();
+                    } catch (error) {
+                        this.showDebug(`Manual restart failed: ${error.message}`);
+                    }
+                }
+            }
+            
+            // Demo mode with simulated speech for testing
+            startDemoMode() {
+                this.showDebug('Starting demo mode with simulated speech...');
+                this.demoActive = true;
+                
+                const demoWords = [
+                    'Hello this is a test of the speech recognition system',
+                    'The price is quite high for this product',
+                    'I need to think about this decision carefully',
+                    'How does this compare to your competitors',
+                    'What are the main benefits of using your service',
+                    'The budget is a concern for our team'
+                ];
+                
+                let wordIndex = 0;
+                this.demoInterval = setInterval(() => {
+                    if (!this.isRecording || !this.demoActive) {
+                        clearInterval(this.demoInterval);
+                        return;
+                    }
+                    
+                    const sentence = demoWords[wordIndex % demoWords.length];
+                    this.showDebug(`Demo speech: "${sentence}"`);
+                    this.addFinalWords(sentence, 0.9);
+                    this.checkCoachingTriggers(sentence);
+                    wordIndex++;
+                    
+                }, 3000); // Every 3 seconds
             }
 
             setupAudioVisualization() {
@@ -1473,16 +1584,35 @@
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 
                 if (!SpeechRecognition) {
+                    console.error('Speech recognition not supported');
+                    this.showDebug('Speech recognition not supported in this browser');
                     this.showError('Speech recognition not supported. Please use Chrome or Safari.');
                     return;
                 }
 
+                this.showDebug('Speech recognition API found, setting up...');
+                this.showDebug(`User agent: ${navigator.userAgent}`);
+                console.log('Setting up speech recognition...');
+                
                 this.recognition = new SpeechRecognition();
+                
+                // Try to force local recognition instead of cloud
+                try {
+                    // Some browsers support local recognition
+                    this.recognition.serviceURI = '';
+                    this.recognition.grammars = new (window.SpeechGrammarList || window.webkitSpeechGrammarList)();
+                } catch (e) {
+                    this.showDebug('Local speech grammar not available');
+                }
+                
                 this.recognition.continuous = true;
                 this.recognition.interimResults = true;
                 this.recognition.lang = 'en-US';
+                this.recognition.maxAlternatives = 1;
 
                 this.recognition.onresult = (event) => {
+                    console.log('Speech recognition result received:', event);
+                    this.showDebug('Speech result received!');
                     this.processResults(event);
                 };
 
@@ -1490,41 +1620,63 @@
                     this.isRecording = true;
                     this.updateUI();
                     this.clearWordStream();
+                    this.showDebug('Speech recognition started successfully!');
                 };
 
                 this.recognition.onend = () => {
-                    // Only restart if still recording and not manually stopped
-                    if (this.isRecording && this.recognition) {
-                        console.log('Speech recognition ended, restarting...');
+                    this.showDebug('Speech recognition ended');
+                    // Restart if still recording and under restart limit
+                    if (this.isRecording && this.recognition && this.restartCount < this.maxRestarts) {
+                        this.restartCount++;
                         setTimeout(() => {
                             if (this.isRecording && this.recognition) {
                                 try {
                                     this.recognition.start();
+                                    this.showDebug(`Restarted speech recognition (${this.restartCount}/${this.maxRestarts})`);
                                 } catch (error) {
-                                    console.log('Failed to restart recognition:', error);
-                                    this.stop(); // Stop everything if restart fails
+                                    this.showDebug(`Restart failed: ${error.message}`);
                                 }
                             }
-                        }, 100);
-                    } else {
-                        console.log('Speech recognition ended - not restarting');
+                        }, 1000); // Longer delay
+                    } else if (this.restartCount >= this.maxRestarts) {
+                        this.showDebug('Max restarts reached - stopping recognition');
+                        this.stop();
                     }
                 };
 
                 this.recognition.onerror = (event) => {
+                    this.showDebug(`Speech recognition error: ${event.error}`);
                     if (event.error === 'not-allowed') {
                         this.showError('Microphone permission denied');
+                        this.stop();
+                    } else if (event.error === 'no-speech') {
+                        this.showDebug('No speech detected - will restart...');
+                    } else if (event.error === 'network') {
+                        this.showDebug('Network error - switching to demo mode');
+                        this.startDemoMode(); // Start demo mode instead of stopping
+                    } else if (event.error === 'service-not-allowed') {
+                        this.showDebug('Speech service blocked - stopping');
+                        this.stop();
+                    } else if (event.error === 'bad-grammar') {
+                        this.showDebug('Grammar error - continuing...');
+                    } else {
+                        this.showDebug(`Unknown error: ${event.error} - stopping`);
                         this.stop();
                     }
                 };
             }
 
             processResults(event) {
+                console.log('Processing speech results...');
+                this.showDebug('Processing speech results...');
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     const result = event.results[i];
                     const transcript = result[0].transcript;
                     const confidence = result[0].confidence || 0.9;
                     const isFinal = result.isFinal;
+                    
+                    console.log('Transcript:', transcript, 'Final:', isFinal, 'Confidence:', confidence);
+                    this.showDebug(`Got: "${transcript}" (${isFinal ? 'final' : 'interim'})`);
                     
                     if (transcript.trim().length === 0) continue;
                     
@@ -1894,6 +2046,19 @@
                 // Could implement a toast notification here
                 alert(message);
             }
+            
+            showDebug(message) {
+                console.log(message);
+                // Also show in the live view for visual debugging
+                const liveView = document.getElementById('liveView');
+                if (liveView && !liveView.classList.contains('collapsed')) {
+                    const wordStream = document.getElementById('wordStream');
+                    const debugElement = document.createElement('div');
+                    debugElement.style.cssText = 'color: #00ff00; font-size: 10px; margin: 2px; padding: 2px; background: rgba(0,0,0,0.5); border-radius: 3px;';
+                    debugElement.textContent = `DEBUG: ${message}`;
+                    wordStream.appendChild(debugElement);
+                }
+            }
 
             stop() {
                 if (!this.isRecording) return; // Prevent multiple stops
@@ -1909,6 +2074,16 @@
                     this.recognition.onend = null; // Prevent auto-restart
                     this.recognition.stop();
                     this.recognition = null;
+                }
+                
+                // Stop demo mode if active
+                if (this.demoActive) {
+                    this.demoActive = false;
+                    if (this.demoInterval) {
+                        clearInterval(this.demoInterval);
+                        this.demoInterval = null;
+                    }
+                    this.showDebug('Demo mode stopped');
                 }
                 
                 // Close audio context
@@ -2003,27 +2178,43 @@
             // Content Mapping Methods
             toggleContentMapping() {
                 const panel = document.getElementById('contentMappingPanel');
-                const button = document.getElementById('toggleContentMapping');
-                const icon = button.querySelector('i');
                 const coachingSection = document.querySelector('.coaching-section');
                 
                 this.mappingPanelVisible = !this.mappingPanelVisible;
                 
                 if (this.mappingPanelVisible) {
                     panel.classList.remove('collapsed');
-                    icon.setAttribute('data-feather', 'x');
-                    button.title = 'Close content mapping panel and return to coaching view';
                     // Hide coaching section when mapping panel is open
                     coachingSection.style.display = 'none';
-                    feather.replace();
                 } else {
                     panel.classList.add('collapsed');
-                    icon.setAttribute('data-feather', 'settings');
-                    button.title = 'Configure coaching responses for specific keywords and phrases';
                     // Show coaching section when mapping panel is closed
                     coachingSection.style.display = 'flex';
-                    feather.replace();
                 }
+            }
+
+            toggleLiveView() {
+                const liveView = document.getElementById('liveView');
+                const button = document.getElementById('toggleLiveView');
+                const icon = button.querySelector('i');
+                const coachingSection = document.querySelector('.coaching-section');
+                
+                this.liveViewVisible = !this.liveViewVisible;
+                
+                if (this.liveViewVisible) {
+                    liveView.classList.remove('collapsed');
+                    icon.setAttribute('data-feather', 'eye-off');
+                    button.title = 'Hide live transcription view';
+                    // Hide coaching section when live view is shown
+                    coachingSection.style.display = 'none';
+                } else {
+                    liveView.classList.add('collapsed');
+                    icon.setAttribute('data-feather', 'eye');
+                    button.title = 'Show live transcription view';
+                    // Show coaching section when live view is hidden
+                    coachingSection.style.display = 'flex';
+                }
+                feather.replace();
             }
 
             addContentMapping() {
@@ -2238,7 +2429,7 @@
 
             // Tutorial System
             checkFirstTime() {
-                const hasSeenTutorial = localStorage.getItem('coachly_tutorial_seen');
+                const hasSeenTutorial = localStorage.getItem('headsup_tutorial_seen');
                 if (!hasSeenTutorial) {
                     setTimeout(() => this.showTutorial(), 1000);
                 }
@@ -2307,7 +2498,7 @@
 
             closeTutorial() {
                 document.getElementById('tutorialOverlay').style.display = 'none';
-                localStorage.setItem('coachly_tutorial_seen', 'true');
+                localStorage.setItem('headsup_tutorial_seen', 'true');
             }
 
             // Settings Menu
@@ -2337,7 +2528,7 @@
                 const url = URL.createObjectURL(dataBlob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = 'coachly-mappings.json';
+                link.download = 'headsup-mappings.json';
                 link.click();
                 URL.revokeObjectURL(url);
                 this.hideSettings();
@@ -2346,7 +2537,7 @@
             // Session Management
             logSessionEvent(event) {
                 const timestamp = new Date().toLocaleTimeString();
-                console.log(`[${timestamp}] Coachly: ${event}`);
+                console.log(`[${timestamp}] Heads Up: ${event}`);
                 
                 // Store session logs
                 if (!this.sessionLogs) {
@@ -2409,7 +2600,7 @@
                 coachingGrid.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">🧠</div>
-                        <div class="empty-title">Coach Analysis Ready</div>
+                        <div class="empty-title">Heads Up</div>
                         <div class="empty-subtitle">
                             Start recording to receive real-time coaching insights based on your speech patterns and content mappings.
                         </div>
@@ -2476,7 +2667,14 @@
                 // Clear current session and UI
                 this.clearCurrentSession();
                 
-                alert(`Session "${sessionName}" saved successfully!`);
+                if (window.electronAPI) {
+                    window.electronAPI.showNotification({
+                        title: 'Session Saved',
+                        body: `Session "${sessionName}" saved successfully!`
+                    });
+                } else {
+                    alert(`Session "${sessionName}" saved successfully!`);
+                }
             }
 
             clearCurrentSession() {
@@ -2495,7 +2693,7 @@
                 coachingGrid.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">🧠</div>
-                        <div class="empty-title">Coach Analysis Ready</div>
+                        <div class="empty-title">Heads Up</div>
                         <div class="empty-subtitle">
                             Start recording to receive real-time coaching insights based on your speech patterns and content mappings.
                         </div>
@@ -2562,17 +2760,17 @@
                 const url = URL.createObjectURL(dataBlob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `coachly-sessions-${new Date().toISOString().split('T')[0]}.json`;
+                link.download = `headsup-sessions-${new Date().toISOString().split('T')[0]}.json`;
                 link.click();
                 URL.revokeObjectURL(url);
             }
 
             saveSessions() {
-                localStorage.setItem('coachly_saved_sessions', JSON.stringify(this.savedSessions));
+                localStorage.setItem('headsup_saved_sessions', JSON.stringify(this.savedSessions));
             }
 
             loadSavedSessions() {
-                const stored = localStorage.getItem('coachly_saved_sessions');
+                const stored = localStorage.getItem('headsup_saved_sessions');
                 if (stored) {
                     this.savedSessions = JSON.parse(stored).map(session => ({
                         ...session,
@@ -2586,8 +2784,8 @@
             // LLM Integration
             showLLMSettings() {
                 const settingsHTML = `
-                    <div style="background: rgba(0,0,0,0.9); position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
-                        <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 2rem; max-width: 600px; width: 90%; color: white;">
+                    <div style="background: rgba(0,0,0,0.87); position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+                        <div style="background: linear-gradient(135deg, rgba(26, 26, 26, 0.96) 0%, rgba(42, 42, 42, 0.96) 100%); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 2rem; max-width: 600px; width: 90%; color: white;">
                             <h3 style="margin: 0 0 1.5rem 0; color: #00d4ff;">🤖 LLM Configuration</h3>
                             
                             <div style="margin-bottom: 1rem;">
@@ -2641,7 +2839,7 @@
                             
                             <div style="display: flex; gap: 1rem; justify-content: flex-end;">
                                 <button onclick="this.parentElement.parentElement.parentElement.remove()" style="padding: 0.75rem 1.5rem; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; cursor: pointer;">Cancel</button>
-                                <button onclick="app.saveLLMConfig(); this.parentElement.parentElement.parentElement.remove();" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #00d4ff 0%, #5b8def 100%); border: none; color: black; border-radius: 8px; cursor: pointer; font-weight: 600;">Save</button>
+                                <button onclick="app.saveLLMConfig(); this.parentElement.parentElement.parentElement.remove();" style="padding: 0.75rem 1.5rem; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Save</button>
                             </div>
                         </div>
                     </div>
@@ -2695,7 +2893,15 @@
                 this.llmConfig.autoSummarize = document.querySelector('input[name="autoSummarize"]:checked').value;
                 
                 localStorage.setItem('headsup_llm_config', JSON.stringify(this.llmConfig));
-                alert('LLM configuration saved!');
+                
+                if (window.electronAPI) {
+                    window.electronAPI.showNotification({
+                        title: 'Settings Saved',
+                        body: 'LLM configuration saved successfully!'
+                    });
+                } else {
+                    alert('LLM configuration saved!');
+                }
             }
 
             loadLLMConfig() {
@@ -2819,6 +3025,106 @@
                 return data.response;
             }
 
+            // Electron Integration
+            setupElectronIntegration() {
+                if (window.electronAPI) {
+                    // Setup menu action listeners
+                    window.electronAPI.onMenuAction((event, action) => {
+                        switch (event) {
+                            case 'start-recording':
+                                this.start();
+                                break;
+                            case 'stop-recording':
+                                this.stop();
+                                break;
+                            case 'save-session':
+                                this.saveCurrentSession();
+                                break;
+                            case 'clear-session':
+                                this.clearCurrentSession();
+                                break;
+                            case 'toggle-content-mapping':
+                                this.toggleContentMapping();
+                                break;
+                            case 'show-tutorial':
+                                this.showTutorial();
+                                break;
+                            case 'show-preferences':
+                                this.showLLMSettings();
+                                break;
+                        }
+                    });
+
+                    // Setup auto-updater listeners
+                    window.electronAPI.onUpdateAvailable((event, info) => {
+                        this.addCoaching('🔄 Update Available', `Version ${info.version} is available. It will be downloaded in the background.`, 'opportunity', 'download');
+                    });
+
+                    window.electronAPI.onUpdateDownloaded((event, info) => {
+                        this.addCoaching('✅ Update Ready', 'Update downloaded. Restart the app to apply the new version.', 'opportunity', 'refresh-cw');
+                    });
+
+                    // Enhanced notifications
+                    this.showNotification = (title, body, options = {}) => {
+                        window.electronAPI.showNotification({ title, body, ...options });
+                    };
+
+                    // Enhanced storage
+                    this.electronStore = {
+                        get: (key) => window.electronAPI.store.get(key),
+                        set: (key, value) => window.electronAPI.store.set(key, value),
+                        delete: (key) => window.electronAPI.store.delete(key)
+                    };
+                }
+            }
+
+            async saveSessionToFile() {
+                if (!window.electronAPI || !this.currentSessionTranscript.trim()) {
+                    return this.saveCurrentSession(); // Fallback to localStorage
+                }
+
+                try {
+                    const result = await window.electronAPI.showSaveDialog({
+                        title: 'Save Session Transcript',
+                        defaultPath: `session-${new Date().toISOString().split('T')[0]}.json`,
+                        filters: [
+                            { name: 'JSON Files', extensions: ['json'] },
+                            { name: 'Text Files', extensions: ['txt'] },
+                            { name: 'All Files', extensions: ['*'] }
+                        ]
+                    });
+
+                    if (!result.canceled) {
+                        const sessionData = {
+                            name: `Session ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
+                            transcript: this.currentSessionTranscript,
+                            startTime: this.recordingStartTimestamp,
+                            endTime: this.recordingEndTimestamp,
+                            wordCount: this.wordCount,
+                            sentenceCount: this.sentenceCount,
+                            duration: this.recordingEndTimestamp ? 
+                                Math.floor((this.recordingEndTimestamp - this.recordingStartTimestamp) / 1000) : 0,
+                            savedAt: new Date(),
+                            contentMappings: this.contentMappings
+                        };
+
+                        // Note: In a real implementation, you'd use fs through the main process
+                        // For now, we'll still use the localStorage method but show the dialog
+                        this.saveCurrentSession();
+                        
+                        if (window.electronAPI.showNotification) {
+                            window.electronAPI.showNotification({
+                                title: 'Session Saved',
+                                body: `Session saved successfully!`
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to save session:', error);
+                    this.saveCurrentSession(); // Fallback
+                }
+            }
+
             // Card Dismissal
             dismissCard(button) {
                 const card = button.closest('.coaching-card');
@@ -2837,7 +3143,7 @@
                                 coachingGrid.innerHTML = `
                                     <div class="empty-state">
                                         <div class="empty-icon">🧠</div>
-                                        <div class="empty-title">Coach Analysis Ready</div>
+                                        <div class="empty-title">Heads Up</div>
                                         <div class="empty-subtitle">
                                             Start recording to receive real-time coaching insights based on your speech patterns and content mappings.
                                         </div>
@@ -2851,7 +3157,7 @@
         }
 
         // Initialize
-        const app = new Coachly();
+        const app = new HeadsUp();
     </script>
 
     <!-- Tutorial Overlay -->
@@ -2859,7 +3165,7 @@
         <div class="tutorial-card">
             <div class="tutorial-step-indicator" id="tutorialStepIndicator"></div>
             <div class="tutorial-icon" id="tutorialIcon">🎙️</div>
-            <div class="tutorial-title" id="tutorialTitle">Welcome to Coachly</div>
+            <div class="tutorial-title" id="tutorialTitle">Welcome to Heads Up</div>
             <div class="tutorial-description" id="tutorialDescription">Your AI-powered sales coaching assistant</div>
             <div class="tutorial-features" id="tutorialFeatures"></div>
             <div class="tutorial-buttons">

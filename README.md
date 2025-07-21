@@ -1,119 +1,202 @@
-# Coachly - AI-Powered Sales Coach
+# Heads Up - AI-Powered Sales Coach
 
-Coachly is a real-time AI sales coaching application that provides instant feedback and guidance during sales conversations. It uses advanced speech recognition to transcribe conversations and provides contextual coaching suggestions based on customizable content mappings.
+Heads Up is a real-time AI sales coaching application that provides instant feedback and guidance during sales conversations. Built with Electron for cross-platform desktop deployment.
 
 ## Features
 
-- <� **Real-Time Speech Transcription**: Live transcription with flowing word display
-- > **AI Coaching Insights**: Instant coaching suggestions based on conversation context
-- <� **Content Mapping System**: Create custom coaching responses for specific keywords
-- = **Fuzzy Matching**: Intelligent keyword detection that handles variations
-- < **Professional Dark UI**: Modern, Uber-style interface optimized for sales professionals
-- =� **Persistent Storage**: All content mappings are saved locally
+- 🎙️ **Real-Time Speech Transcription**: Live transcription with flowing word display
+- 🤖 **AI Coaching Insights**: Instant coaching suggestions based on conversation context
+- 🎯 **Content Mapping System**: Create custom coaching responses for specific keywords
+- 🔍 **Fuzzy Matching**: Intelligent keyword detection that handles variations
+- 🌙 **Professional Dark UI**: Modern interface optimized for sales professionals
+- 💾 **Persistent Storage**: All content mappings and sessions saved locally
+- 🤖 **LLM Integration**: Support for OpenAI, Claude, and Ollama for advanced analysis
+- ⚡ **Auto-Updates**: Seamless updates through GitHub releases
 
 ## Quick Start
 
-1. **Open the App**: Simply open `coachly.html` in your web browser (Chrome or Safari recommended)
-2. **Grant Microphone Access**: Click "Start Recording" and allow microphone permissions
-3. **Start Speaking**: Your words will appear in real-time in the live view
-4. **Receive Coaching**: AI coaching cards will appear based on your conversation
+### Development
 
-## Content Mapping System
+```bash
+# Install dependencies
+npm install
 
-### What is Content Mapping?
+# Start in development mode
+npm run dev
 
-Content mapping allows you to define custom coaching responses that trigger when specific keywords or phrases are detected in conversation.
+# Or use the dev script
+node scripts/dev.js
+```
 
-### Types of Content Mappings
+### Building
 
-- =� **Hint**: General coaching tips and reminders
-- <� **Competitive Intelligence**: Information about competitors
-- = **Keyword Response**: Specific responses to key terms
-- =� **Objection Handler**: Strategies for handling customer objections
-- > **Closing Technique**: Sales closing strategies
+```bash
+# Build for current platform
+npm run build
 
-### Creating Content Mappings
+# Build for specific platforms
+npm run build:mac
+npm run build:win
+npm run build:linux
 
-1. Click the **"Content Map"** button in the header
-2. Select a mapping type from the dropdown
-3. Enter keywords (comma-separated) that should trigger the coaching
-4. Write your coaching content (HTML and emojis supported)
-5. Enable fuzzy matching for flexible keyword detection
-6. Click **"Add Mapping"**
+# Or use the build script
+node scripts/build.js [platform]
+```
 
-### Fuzzy Matching
+### Installation
 
-When enabled, fuzzy matching will detect variations of your keywords:
-- "IncidentIO" matches "Incident IO", "incident-io", "incidentio"
-- Handles spaces, hyphens, underscores, and case variations
-- Uses advanced algorithms to catch similar spellings
+1. **Download**: Get the latest release from [GitHub Releases](https://github.com/your-username/heads-up/releases)
+2. **Install**: 
+   - **macOS**: Open the `.dmg` file and drag to Applications
+   - **Windows**: Run the `.exe` installer
+   - **Linux**: Use the `.AppImage`, `.deb`, or `.rpm` package
 
-## User Interface
+## Usage
 
-### Main Components
+### Getting Started
 
-1. **Header**: 
-   - Start/Stop recording controls
-   - Live view toggle
-   - Content mapping configuration
+1. **Launch Heads Up** from your applications
+2. **Grant microphone access** when prompted
+3. **Click "Start Recording"** to begin live transcription
+4. **Configure content mappings** for custom coaching responses
 
-2. **Live View** (Collapsible):
-   - Real-time word flow display
-   - Session metrics (words, sentences, confidence, duration)
-   - Visual speech feedback
+### Content Mapping
 
-3. **Coaching Section**:
-   - AI coaching cards with contextual advice
-   - Shows which keyword triggered each suggestion
-   - Maximum of 6 cards displayed at once
+1. Click the **Settings** icon in the sidebar
+2. Select **"Content Map"** to configure coaching responses
+3. Choose mapping type (Hint, Competitive Intel, Objection Handler, etc.)
+4. Enter keywords that should trigger the coaching
+5. Write your coaching content (HTML and emojis supported)
+6. Enable fuzzy matching for flexible keyword detection
+
+### LLM Integration
+
+1. Go to **Settings** → **LLM Settings**
+2. Choose your provider (OpenAI, Claude, or Ollama)
+3. Enter your API key and configure the model
+4. Set auto-summarize preference:
+   - **Never**: No LLM analysis
+   - **Ask each time**: Manual button appears
+   - **Always**: Automatic analysis after each session
 
 ### Keyboard Shortcuts
 
-- **Space**: Start/Stop recording (when button is focused)
-- **Escape**: Close content mapping panel
+- **⌘/Ctrl + R**: Start/Stop recording
+- **⌘/Ctrl + L**: Toggle live view
+- **⌘/Ctrl + M**: Toggle content mapping
+- **⌘/Ctrl + S**: Save session
+- **⌘/Ctrl + Shift + H**: Hide/Show window
 
-## Best Practices
+## Development
 
-1. **Speak Naturally**: The system works best with natural speech patterns
-2. **Create Specific Mappings**: More specific keywords lead to better coaching
-3. **Use HTML Formatting**: Make your coaching content rich with formatting and emojis
-4. **Test Your Mappings**: Speak the keywords to ensure they trigger correctly
-5. **Review and Refine**: Regularly update your content mappings based on real conversations
+### Project Structure
 
-## Technical Requirements
+```
+heads-up/
+├── src/
+│   ├── main.js          # Electron main process
+│   ├── preload.js       # Preload script for security
+│   └── index.html       # Main application UI
+├── assets/              # Icons and resources
+├── build/              # Build configuration
+├── scripts/            # Build and dev scripts
+├── .github/workflows/  # CI/CD configuration
+└── dist/              # Built applications
+```
 
-- **Browser**: Chrome or Safari (latest versions)
-- **Microphone**: Any standard microphone
-- **Internet**: Required for initial load only (works offline after loading)
+### Tech Stack
+
+- **Electron**: Cross-platform desktop framework
+- **Vanilla JavaScript**: No frameworks, pure ES6+
+- **Web Speech API**: Real-time speech recognition
+- **Feather Icons**: Clean, consistent iconography
+- **Electron Builder**: Packaging and distribution
+- **GitHub Actions**: Automated builds and releases
+
+### Building for Production
+
+The build process creates native installers for all platforms:
+
+```bash
+# Build all platforms (requires appropriate OS)
+npm run build
+
+# Build specific platform
+npm run build:mac    # macOS .dmg and .zip
+npm run build:win    # Windows .exe installer
+npm run build:linux  # Linux .AppImage, .deb, .rpm
+```
+
+### Release Process
+
+1. **Update version** in `package.json`
+2. **Create git tag**: `git tag v1.0.0`
+3. **Push tag**: `git push origin v1.0.0`
+4. **GitHub Actions** will automatically build and create a release
+
+## Configuration
+
+### Environment Variables
+
+- `NODE_ENV`: Set to 'development' for dev mode
+- `GH_TOKEN`: GitHub token for releases (CI only)
+
+### Storage
+
+- **Settings**: Stored in Electron's app data directory
+- **Sessions**: Saved to localStorage with optional file export
+- **Content Mappings**: Persistent across app restarts
 
 ## Privacy & Security
 
-- All speech processing happens locally in your browser
-- No audio is sent to external servers
-- Content mappings are stored in browser localStorage
-- Complete privacy for sensitive sales conversations
+- **Local Processing**: All speech recognition happens locally
+- **No External Servers**: Audio never leaves your device
+- **Secure Storage**: Settings encrypted using Electron Store
+- **Code Signing**: Apps are signed for security (production builds)
 
 ## Troubleshooting
 
-### Microphone Not Working
-- Ensure microphone permissions are granted
-- Check system audio settings
-- Try refreshing the page
+### Common Issues
 
-### No Transcription Appearing
-- Speak clearly and at normal volume
-- Check the audio level indicator
+**Microphone not working:**
+- Check system permissions in Security & Privacy
+- Restart the app after granting permissions
 - Ensure no other apps are using the microphone
 
-### Content Mappings Not Triggering
-- Verify keywords are spelled correctly
-- Enable fuzzy matching for more flexibility
-- Check that mappings are saved (visible in the list)
+**App won't start:**
+- Check if you have the latest version
+- Try deleting app data and restarting
+- Run from terminal to see error messages
+
+**Build issues:**
+- Ensure Node.js 18+ is installed
+- Clear `node_modules` and reinstall
+- Check platform-specific requirements
+
+### Logs
+
+- **macOS**: `~/Library/Logs/Heads Up/`
+- **Windows**: `%USERPROFILE%\\AppData\\Roaming\\Heads Up\\logs\\`
+- **Linux**: `~/.config/Heads Up/logs/`
+
+## Contributing
+
+1. **Fork** the repository
+2. **Create** a feature branch
+3. **Make** your changes
+4. **Test** thoroughly
+5. **Submit** a pull request
+
+## License
+
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Support
 
-For issues or feature requests, please contact your system administrator or the Coachly development team.
+- **Issues**: [GitHub Issues](https://github.com/your-username/heads-up/issues)
+- **Documentation**: This README and in-app tutorial
+- **Updates**: Automatic through the app or manual download
 
 ---
 
-**Coachly** - Empowering sales professionals with real-time AI coaching
+**Heads Up** - Empowering sales professionals with real-time AI coaching

@@ -79,3 +79,6 @@ out/
 *.zip
 *.tar.gz
 *.dmg
+
+# Auto-generated files
+src/auto-updater.js

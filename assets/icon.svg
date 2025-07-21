@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#grad1)" stroke="#4a5568" stroke-width="8"/>
+  
+  <!-- Head silhouette -->
+  <path d="M256 120 C290 120, 320 150, 320 190 C320 210, 310 225, 300 235 L300 270 C300 300, 280 320, 256 320 C232 320, 212 300, 212 270 L212 235 C202 225, 192 210, 192 190 C192 150, 222 120, 256 120 Z" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- Alert/notification bubble -->
+  <circle cx="360" cy="160" r="35" fill="#ff6b6b" stroke="#ffffff" stroke-width="4"/>
+  <text x="360" y="170" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="28" font-weight="bold">!</text>
+  
+  <!-- Microphone indicator -->
+  <rect x="240" y="350" width="32" height="50" rx="16" fill="#4ade80" opacity="0.8"/>
+  <rect x="248" y="410" width="16" height="20" fill="#4ade80" opacity="0.8"/>
+  <path d="M224 390 L288 390" stroke="#4ade80" stroke-width="4" stroke-linecap="round" opacity="0.8"/>
+</svg>
