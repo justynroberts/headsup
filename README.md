@@ -16,7 +16,24 @@ Coach your team via Chrome. Real-time transcription and AI insights.
 
 ## 🚀 Installation
 
-### From Source
+### Easy Install (Recommended)
+
+1. Download the latest release from [Releases](https://github.com/justynroberts/headsup/releases)
+   - Download `headsup-extension-v1.0.0.zip`
+
+2. Extract the zip file to a folder on your computer
+
+3. Open Chrome and navigate to `chrome://extensions/`
+
+4. Enable **Developer mode** by toggling the switch in the top right corner
+   - ⚠️ **Note**: Developer mode is required until we complete code signing
+   - This is safe - you're installing from our official GitHub repository
+
+5. Click "Load unpacked" and select the extracted folder
+
+6. The Heads Up extension icon will appear in your Chrome toolbar
+
+### From Source (Alternative)
 
 1. Clone this repository:
    ```bash
@@ -24,13 +41,7 @@ Coach your team via Chrome. Real-time transcription and AI insights.
    cd headsup
    ```
 
-2. Open Chrome and navigate to `chrome://extensions/`
-
-3. Enable "Developer mode" in the top right corner
-
-4. Click "Load unpacked" and select the `extension` folder from this repository
-
-5. The Heads Up extension icon will appear in your Chrome toolbar
+2. Follow steps 3-6 from the Easy Install method above, but select the `extension` folder
 
 ### Permissions Required
 
