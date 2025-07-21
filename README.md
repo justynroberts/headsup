@@ -21,7 +21,7 @@ Coach your team via Chrome.Pop up key information when most needed
 ### Easy Install (Recommended)
 
 1. Download the latest release from [Releases](https://github.com/justynroberts/headsup/releases)
-   - Download `headsup-extension-v1.0.0.zip`
+   - Download `headsup-extension-v1.0.1.zip`
 
 2. Extract the zip file to a folder on your computer
 
