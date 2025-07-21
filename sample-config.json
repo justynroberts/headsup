@@ -1,0 +1,43 @@
+{
+  "llmSettings": {
+    "provider": "openai",
+    "apiKey": "YOUR_API_KEY_HERE",
+    "model": "gpt-3.5-turbo",
+    "prompt": "Analyze this sales conversation and provide:\n1. Key objections raised\n2. Opportunities missed\n3. Suggested follow-up actions\n4. Overall effectiveness score (1-10)\n\nDo not fill in any gaps. If data is missing, say so.\n\nTranscript: {transcript}",
+    "autoAnalyze": "ask"
+  },
+  "contentMappings": [
+    {
+      "id": "pricing-objection",
+      "type": "objection",
+      "keywords": ["price", "cost", "expensive", "budget", "afford"],
+      "response": "Focus on value and ROI. Ask: 'What would it cost your business if this problem isn't solved?' Highlight payment plans if available."
+    },
+    {
+      "id": "competitor-mention",
+      "type": "competitive",
+      "keywords": ["competitor", "alternative", "other option", "shopping around"],
+      "response": "Acknowledge their research. Focus on our unique differentiators: 24/7 support, no setup fees, 99.9% uptime SLA."
+    },
+    {
+      "id": "decision-timeline",
+      "type": "closing",
+      "keywords": ["timeline", "when", "decision", "next steps"],
+      "response": "Great question! Most clients see value within 30 days. We can start implementation this week. What timeline works best for you?"
+    },
+    {
+      "id": "technical-concern",
+      "type": "objection",
+      "keywords": ["integrate", "technical", "implementation", "complex"],
+      "response": "We have a dedicated implementation team. Average setup time is 2-3 hours with full support. We also offer done-for-you setup."
+    },
+    {
+      "id": "authority-check",
+      "type": "hint",
+      "keywords": ["boss", "manager", "team", "approval", "decision maker"],
+      "response": "Suggest: 'Would it be helpful if I prepared a one-page summary for your team? I can highlight the key benefits and ROI.'"
+    }
+  ],
+  "exportDate": "2025-01-21T12:00:00Z",
+  "version": "1.0.0"
+}

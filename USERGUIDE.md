@@ -1,5 +1,7 @@
 # Heads Up User Guide
 
+![Heads Up Screenshot](images/screenshot.png)
+
 Welcome to the comprehensive user guide for Heads Up - your AI-powered sales coaching companion.
 
 ## Table of Contents
@@ -166,6 +168,17 @@ Content mappings are pre-configured coaching responses triggered by specific key
    - Select previously exported JSON file
    - All settings and mappings are restored
 
+3. **Using the Sample Configuration**
+   - We provide a `sample-config.json` with pre-built coaching responses
+   - Contains 5 common sales scenarios:
+     - Pricing objections
+     - Competitor mentions
+     - Decision timeline questions
+     - Technical concerns
+     - Authority checks
+   - To import: Settings → Import Data → Select `sample-config.json`
+   - Remember to add your API key after importing
+
 ### Clear Data
 
 - Settings → Data Management → Clear All Data
@@ -223,6 +236,30 @@ Configure keyboard shortcuts in Chrome:
 - **Settings Not Saving**: Check Chrome storage permissions
 - **Extension Crashes**: Report issue on GitHub
 
+## Configuration File Format
+
+If you want to create your own configuration file or modify the sample, here's the structure:
+
+```json
+{
+  "llmSettings": {
+    "provider": "openai",
+    "apiKey": "YOUR_API_KEY",
+    "model": "gpt-3.5-turbo",
+    "prompt": "Your analysis prompt with {transcript} placeholder",
+    "autoAnalyze": "ask"
+  },
+  "contentMappings": [
+    {
+      "id": "unique-id",
+      "type": "objection|closing|competitive|hint|keyword",
+      "keywords": ["trigger", "words"],
+      "response": "Your coaching response"
+    }
+  ]
+}
+```
+
 ## Tips for Best Results
 
 1. **Speak Clearly**: Better audio = better transcription
@@ -230,6 +267,7 @@ Configure keyboard shortcuts in Chrome:
 3. **Regular Saves**: Export important sessions immediately
 4. **Test First**: Do a quick test recording before important calls
 5. **Keep Chrome Updated**: Ensures compatibility
+6. **Import Sample Config**: Get started quickly with proven coaching responses
 
 ## Privacy Notes
 

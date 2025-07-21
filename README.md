@@ -1,6 +1,6 @@
 # Heads Up - AI Sales Coach Chrome Extension
 
-![Heads Up Logo](images/headsup-banner.png)
+![Heads Up Screenshot](images/screenshot.png)
 
 Heads Up is a powerful Chrome extension that provides real-time sales coaching during your calls. It transcribes conversations in real-time and offers AI-powered insights to help you close more deals.
 
@@ -72,6 +72,22 @@ Heads Up supports multiple LLM providers:
 3. **Ollama (Local)**
    - Install [Ollama](https://ollama.ai) on your machine
    - Default URL: `http://localhost:11434`
+
+### Quick Start with Sample Configuration
+
+We've included a `sample-config.json` file that contains:
+- Pre-configured LLM settings
+- 5 ready-to-use content mappings for common sales scenarios
+- Example prompts for AI analysis
+
+To use it:
+1. Open Heads Up and go to Settings
+2. Click "Import Data"
+3. Select the `sample-config.json` file
+4. Add your API key in the LLM settings
+5. You're ready to go!
+
+This gives you a head start with proven coaching responses for pricing objections, competitor mentions, and more.
 
 ## 🛠️ Development
 
