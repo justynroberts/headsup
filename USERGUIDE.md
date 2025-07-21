@@ -2,7 +2,7 @@
 
 ![Heads Up Screenshot](images/screenshot.png)
 
-Welcome to the comprehensive user guide for Heads Up - your AI-powered sales coaching companion.
+It's a coach in your Chrome browser.
 
 ## Table of Contents
 

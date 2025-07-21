@@ -2,7 +2,7 @@
 
 ![Heads Up Screenshot](images/screenshot.png)
 
-Heads Up is a powerful Chrome extension that provides real-time sales coaching during your calls. It transcribes conversations in real-time and offers AI-powered insights to help you close more deals.
+Coach your team via Chrome. Real-time transcription and AI insights.
 
 ## ✨ Features
 
