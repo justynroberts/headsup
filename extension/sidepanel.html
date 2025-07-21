@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heads Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=TikTok+Sans:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Hidden State UI -->
+        <div id="hiddenStateUI" class="hidden-state" style="display: none;">
+            <div class="hidden-content">
+                <div class="hidden-header">
+                    <div class="hidden-logo">🎯</div>
+                    <div class="hidden-info">
+                        <div class="hidden-title">Heads Up</div>
+                        <div class="hidden-status" id="hiddenStatus">Recording...</div>
+                    </div>
+                </div>
+                <button id="showUIBtn" class="show-ui-btn tooltip" data-tooltip="Show Full UI">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main UI Content -->
+        <div id="mainUIContent" class="main-ui-content">
+        <!-- Top Controls -->
+        <div class="top-controls">
+            <div class="control-buttons">
+                <button id="recordBtn" class="control-btn record-control tooltip" data-tooltip="Start Recording">
+                    <svg id="recordIcon" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="12" r="8"/>
+                    </svg>
+                </button>
+                <button id="liveViewToggle" class="control-btn tooltip" data-tooltip="Toggle Live View">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </button>
+                <button id="hideUIBtn" class="control-btn tooltip" data-tooltip="Hide UI (recording continues)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18"/>
+                        <path d="M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="nav-buttons">
+                <button class="nav-button active tooltip" data-tab="recording" data-tooltip="Recording Dashboard">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 9h6v6h-6z"/>
+                        <path d="M21 15V9a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2Z"/>
+                    </svg>
+                </button>
+                <button class="nav-button tooltip" data-tab="content" data-tooltip="Content Management">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                        <polyline points="14,2 14,8 20,8"/>
+                    </svg>
+                </button>
+                <button class="nav-button tooltip" data-tab="settings" data-tooltip="Settings & LLM Config">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m15.5-3.5L19 4m-2.5 15.5L19 20M4.5 16.5L2 19m2.5-15.5L2 5"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Indicator -->
+        <div class="status-indicator" id="statusIndicator">
+            <div class="status-content">
+                <span class="status-icon">●</span>
+                <span class="status-text">Ready</span>
+            </div>
+        </div>
+
+        <!-- Recording Tab -->
+        <div id="recording-tab" class="tab-content active">
+            <div id="permissionHelp" class="permission-help" style="display: none;">
+                <div class="help-title">💡 Enable Microphone Access</div>
+                <div class="help-steps">
+                    Look for the microphone icon 🎤 in your address bar and click "Allow" when Chrome asks for permission.
+                </div>
+            </div>
+            
+            <div class="main-content">
+
+                <!-- Live Transcription View -->
+                <div id="liveView" class="live-view collapsed">
+                    <div class="live-header">
+                        <h3>Live Transcription</h3>
+                    </div>
+                    <div class="live-content">
+                        <div id="transcriptionArea" class="transcription-area">
+                            <div class="transcription-placeholder">Start recording to see live transcription...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coaching Section -->
+                <div class="coaching-section">
+                    <div class="section-header">
+                        <h2>Heads Up</h2>
+                        <div class="header-actions">
+                            <button class="action-btn secondary" id="clearBtn">Clear</button>
+                            <button class="action-btn primary" id="saveBtn">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="coaching-content" id="coachingContent">
+                        <div class="welcome-message">
+                            <img src="hint.jpeg" alt="Heads Up" style="width: 256px; height: 256px; border-radius: 16px; object-fit: cover; margin-bottom: 1rem;">
+                            <h3>Welcome to Heads Up</h3>
+                            <p>Click the record button to start recording your conversation and get real-time coaching tips.</p>
+                            <button class="get-started-btn" id="getStartedBtn">
+                                <svg style="margin-right: 8px; width: 14px; height: 14px;" viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="5,3 19,12 5,21"/>
+                                </svg>
+                                Get Started
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="analyzeBtn" class="btn-secondary" style="width: 100%; display: none; margin-top: 16px;">
+                    🤖 Analyze with LLM
+                </button>
+                
+                <div id="transcriptActions" style="display: none; margin-top: 8px; gap: 8px;" class="data-buttons">
+                    <button id="copyTranscriptBtn" class="btn-secondary">
+                        📋 Copy Transcript
+                    </button>
+                    <button id="saveTranscriptBtn" class="btn-secondary">
+                        💾 Save Transcript
+                    </button>
+                </div>
+                
+                <div id="llmActions" style="display: none; margin-top: 8px; gap: 8px;" class="data-buttons">
+                    <button id="copyLLMBtn" class="btn-secondary">
+                        📋 Copy Analysis
+                    </button>
+                    <button id="saveLLMAnalysisBtn" class="btn-secondary">
+                        💾 Save Analysis
+                    </button>
+                    <button id="saveAllBtn" class="btn-secondary">
+                        📦 Save All
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Management Tab -->
+        <div id="content-tab" class="tab-content">
+            <div class="settings-section">
+                <div class="settings-title">
+                    <svg style="width: 16px; height: 16px; margin-right: 6px;" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="12" r="3"/>
+                        <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Content Mappings
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select id="mappingType" class="form-select">
+                        <option value="objection">🛡️ Objection Handler</option>
+                        <option value="closing">🤝 Closing Technique</option>
+                        <option value="competitive">🎯 Competitive Intel</option>
+                        <option value="hint">💡 Hint/Tip</option>
+                        <option value="keyword">🔑 Keyword Response</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Keywords (comma separated)</label>
+                    <input type="text" id="mappingKeywords" class="form-input" placeholder="price, cost, expensive, budget">
+                    <div class="help-text">Enter keywords that will trigger this coaching response</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Coaching Response</label>
+                    <textarea id="mappingContent" class="form-textarea" placeholder="Focus on value and ROI. Ask about the cost of not solving the problem."></textarea>
+                </div>
+                
+                <button id="addMappingBtn" class="btn-secondary">Add Content Mapping</button>
+            </div>
+            
+            <div class="settings-section">
+                <div class="settings-title clickable-title" id="mappingsToggle">
+                    <svg style="width: 16px; height: 16px; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                        <polyline points="14,2 14,8 20,8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10,9 9,9 8,9"/>
+                    </svg>
+                    Your Content Mappings
+                    <svg id="mappingsToggleIcon" class="toggle-icon" style="width: 14px; height: 14px; margin-left: auto; transition: transform 0.2s ease;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6,9 12,15 18,9"/>
+                    </svg>
+                </div>
+                <div id="mappingsList" class="collapsible-content">
+                    <div style="color: #666; font-style: italic; text-align: center; padding: 20px;">
+                        No content mappings yet. Add one above to get started.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content">
+            <div class="settings-section">
+                <div class="settings-title clickable-title" id="llmToggle">
+                    <svg style="width: 16px; height: 16px; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7v10l10 5 10-5V7l-10-5z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    LLM Configuration
+                    <svg id="llmToggleIcon" class="toggle-icon" style="width: 14px; height: 14px; margin-left: auto; transition: transform 0.2s ease;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6,9 12,15 18,9"/>
+                    </svg>
+                </div>
+                
+                <div id="llmContent" class="collapsible-content">
+                <div class="form-group">
+                    <label class="form-label">Provider</label>
+                    <select id="llmProvider" class="form-select">
+                        <option value="openai">OpenAI (ChatGPT)</option>
+                        <option value="claude">Claude (Anthropic)</option>
+                        <option value="ollama">Ollama (Local)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">API Key</label>
+                    <input type="password" id="llmApiKey" class="form-input" placeholder="Enter your API key">
+                    <div class="help-text">Your API key is stored locally and never shared</div>
+                </div>
+                
+                <div class="form-group" id="baseUrlGroup" style="display: none;">
+                    <label class="form-label">Base URL (Ollama)</label>
+                    <input type="text" id="llmBaseUrl" class="form-input" value="http://localhost:11434">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Model</label>
+                    <input type="text" id="llmModel" class="form-input" placeholder="gpt-3.5-turbo">
+                    <div class="help-text">Model name (e.g., gpt-4, claude-3-sonnet, llama2)</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Analysis Prompt</label>
+                    <textarea id="llmPrompt" class="form-textarea" placeholder="Analyze this sales conversation and provide insights..."></textarea>
+                    <div class="help-text">Use {transcript} as placeholder for the conversation text</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Auto-Analyze Sessions</label>
+                    <select id="autoAnalyze" class="form-select">
+                        <option value="ask">Ask each time</option>
+                        <option value="always">Always auto-analyze</option>
+                        <option value="never">Never auto-analyze</option>
+                    </select>
+                </div>
+                
+                <button id="saveLLMBtn" class="btn-secondary">Save LLM Settings</button>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <div class="settings-title">
+                    <svg style="width: 16px; height: 16px; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14,2 14,8 20,8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10,9 9,9 8,9"/>
+                    </svg>
+                    Data Management
+                </div>
+                <div class="data-buttons">
+                    <button id="exportDataBtn" class="btn-secondary">
+                        <svg style="width: 14px; height: 14px; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7,10 12,15 17,10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Export All Data
+                    </button>
+                    <button id="importDataBtn" class="btn-secondary">
+                        <svg style="width: 14px; height: 14px; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17,8 12,3 7,8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        Import Data
+                    </button>
+                    <button id="clearDataBtn" class="btn-secondary btn-danger">
+                        <svg style="width: 14px; height: 14px; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3,6 5,6 21,6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                        Clear All Data
+                    </button>
+                </div>
+                <input type="file" id="importFileInput" accept=".json" style="display: none;">
+                <div class="help-text">Export your content mappings and settings, import data packs, or clear all data</div>
+            </div>
+        </div>
+        </div> <!-- End main-ui-content -->
+    </div>
+
+    <script src="sidepanel.js"></script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Microphone Test - Heads Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .test-box {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        .success {
+            color: #22c55e;
+        }
+        
+        .error {
+            color: #ff6b6b;
+        }
+        
+        .info {
+            color: #fbbf24;
+        }
+        
+        #log {
+            background: #000;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎤 Microphone Test</h1>
+    <p>This will help diagnose microphone permission issues in your Chrome extension.</p>
+    
+    <div class="test-box">
+        <h3>Step 1: Basic Permission Test</h3>
+        <button onclick="testBasicPermission()">Test Microphone Access</button>
+        <div id="basicResult"></div>
+    </div>
+    
+    <div class="test-box">
+        <h3>Step 2: Speech Recognition Test</h3>
+        <button onclick="testSpeechRecognition()">Test Speech Recognition</button>
+        <div id="speechResult"></div>
+    </div>
+    
+    <div class="test-box">
+        <h3>Step 3: Permission Status</h3>
+        <button onclick="checkPermissions()">Check Current Permissions</button>
+        <div id="permissionResult"></div>
+    </div>
+    
+    <div class="test-box">
+        <h3>Debug Log</h3>
+        <button onclick="clearLog()">Clear Log</button>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            logDiv.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        async function testBasicPermission() {
+            const resultDiv = document.getElementById('basicResult');
+            resultDiv.innerHTML = '<div class="info">Testing microphone access...</div>';
+            
+            try {
+                log('Requesting microphone permission...');
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    }
+                });
+                
+                log('✅ Microphone access granted!', 'success');
+                resultDiv.innerHTML = '<div class="success">✅ Microphone access granted!</div>';
+                
+                // Test audio levels
+                const audioContext = new AudioContext();
+                const source = audioContext.createMediaStreamSource(stream);
+                const analyser = audioContext.createAnalyser();
+                source.connect(analyser);
+                
+                const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                let testCount = 0;
+                
+                const testAudio = () => {
+                    analyser.getByteFrequencyData(dataArray);
+                    const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
+                    
+                    if (testCount < 10) {
+                        log(`Audio level: ${Math.round(average)}`);
+                        testCount++;
+                        setTimeout(testAudio, 500);
+                    } else {
+                        log('Audio level test complete', 'success');
+                        stream.getTracks().forEach(track => track.stop());
+                        audioContext.close();
+                    }
+                };
+                
+                testAudio();
+                
+            } catch (error) {
+                log(`❌ Microphone error: ${error.name} - ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.name}<br>Message: ${error.message}</div>`;
+                
+                if (error.name === 'NotAllowedError') {
+                    resultDiv.innerHTML += '<div class="info">💡 Try clicking the microphone icon in your address bar and selecting "Allow"</div>';
+                }
+            }
+        }
+
+        async function testSpeechRecognition() {
+            const resultDiv = document.getElementById('speechResult');
+            resultDiv.innerHTML = '<div class="info">Testing speech recognition...</div>';
+            
+            try {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                
+                if (!SpeechRecognition) {
+                    throw new Error('Speech recognition not supported in this browser');
+                }
+                
+                log('Speech Recognition API found', 'success');
+                
+                const recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
+                
+                recognition.onstart = () => {
+                    log('🎙️ Speech recognition started - say something!', 'success');
+                    resultDiv.innerHTML = '<div class="success">🎙️ Speech recognition active - say something!</div>';
+                };
+                
+                recognition.onresult = (event) => {
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        const result = event.results[i];
+                        const transcript = result[0].transcript;
+                        const confidence = result[0].confidence || 'unknown';
+                        
+                        log(`Heard: "${transcript}" (confidence: ${confidence})`);
+                        resultDiv.innerHTML = `<div class="success">✅ Speech detected: "${transcript}"</div>`;
+                    }
+                };
+                
+                recognition.onerror = (event) => {
+                    log(`Speech recognition error: ${event.error}`, 'error');
+                    resultDiv.innerHTML = `<div class="error">❌ Speech error: ${event.error}</div>`;
+                };
+                
+                recognition.onend = () => {
+                    log('Speech recognition ended');
+                };
+                
+                recognition.start();
+                
+                // Auto-stop after 5 seconds
+                setTimeout(() => {
+                    recognition.stop();
+                }, 5000);
+                
+            } catch (error) {
+                log(`Speech recognition error: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function checkPermissions() {
+            const resultDiv = document.getElementById('permissionResult');
+            resultDiv.innerHTML = '<div class="info">Checking permissions...</div>';
+            
+            try {
+                // Check microphone permission
+                const micPermission = await navigator.permissions.query({ name: 'microphone' });
+                log(`Microphone permission: ${micPermission.state}`);
+                
+                // Check if we're in an extension context
+                const isExtension = !!(chrome && chrome.runtime && chrome.runtime.id);
+                log(`Extension context: ${isExtension}`);
+                
+                // Check user agent
+                log(`User agent: ${navigator.userAgent}`);
+                
+                // Check if we're in a secure context
+                log(`Secure context: ${window.isSecureContext}`);
+                
+                // Check protocol
+                log(`Protocol: ${window.location.protocol}`);
+                
+                resultDiv.innerHTML = `
+                    <div>🎤 Microphone: <span class="${micPermission.state === 'granted' ? 'success' : 'error'}">${micPermission.state}</span></div>
+                    <div>🔒 Secure context: <span class="${window.isSecureContext ? 'success' : 'error'}">${window.isSecureContext}</span></div>
+                    <div>📦 Extension: <span class="${isExtension ? 'success' : 'info'}">${isExtension}</span></div>
+                    <div>🌐 Protocol: <span class="info">${window.location.protocol}</span></div>
+                `;
+                
+            } catch (error) {
+                log(`Permission check error: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">❌ Error checking permissions: ${error.message}</div>`;
+            }
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        // Auto-run permission check on load
+        window.addEventListener('load', () => {
+            log('Microphone Test Tool loaded');
+            checkPermissions();
+        });
+    </script>
+</body>
+</html>
