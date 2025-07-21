@@ -1,6 +1,6 @@
 # Heads Up - AI Sales Coach Chrome Extension
 
-<img src="images/screenshot.png" alt="Heads Up Screenshot" width="600">
+<img src="images/screenshot.png" alt="Heads Up Screenshot" width="300">
 
 Coach your team via Chrome. Real-time transcription and AI insights.
 
