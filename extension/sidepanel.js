@@ -1094,6 +1094,7 @@ class HeadsUp {
             <div class="welcome-message">
                 <img src="hint.jpeg" alt="Heads Up" style="width: 256px; height: 256px; border-radius: 16px; object-fit: cover; margin-bottom: 1rem;">
                 <h3>Welcome to Heads Up</h3>
+                <div class="version-info">v1.0.4</div>
                 <p>Click the record button to start recording your conversation and get real-time coaching tips.</p>
                 <button class="get-started-btn" id="getStartedBtn2">
                     <svg style="margin-right: 8px; width: 14px; height: 14px;" viewBox="0 0 24 24" fill="currentColor">
