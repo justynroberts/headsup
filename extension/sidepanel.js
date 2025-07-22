@@ -132,6 +132,12 @@ class HeadsUp {
             this.contentMappings = result.contentMappings || [];
             this.llmConfig = { ...this.llmConfig, ...(result.llmConfig || {}) };
             
+            // If no data found, try to restore from backup
+            if (!result.lastSaved && this.contentMappings.length === 0 && !this.llmConfig.apiKey) {
+                console.log('🔄 No recent data found, checking backups...');
+                await this.restoreFromBackup();
+            }
+            
             // Restore session state if it exists
             if (result.currentSessionState) {
                 console.log('🔄 Restoring previous session state...');
@@ -175,7 +181,9 @@ class HeadsUp {
             const sessionData = {
                 savedSessions: this.savedSessions,
                 contentMappings: this.contentMappings,
-                llmConfig: this.llmConfig
+                llmConfig: this.llmConfig,
+                lastSaved: Date.now(),
+                version: '1.0.4'
             };
             
             // Save current session state if recording
@@ -192,9 +200,56 @@ class HeadsUp {
             }
             
             await chrome.storage.local.set(sessionData);
+            
+            // Create a backup copy with timestamp
+            const backupKey = `headsup_backup_${Date.now()}`;
+            await chrome.storage.local.set({ [backupKey]: sessionData });
+            
+            // Keep only the 3 most recent backups
+            const allKeys = await chrome.storage.local.get(null);
+            const backupKeys = Object.keys(allKeys)
+                .filter(key => key.startsWith('headsup_backup_'))
+                .sort()
+                .reverse();
+            
+            if (backupKeys.length > 3) {
+                const keysToRemove = backupKeys.slice(3);
+                await chrome.storage.local.remove(keysToRemove);
+            }
+            
+            console.log(`💾 Data saved with ${backupKeys.length} backups available`);
         } catch (error) {
             console.error('Failed to save to storage:', error);
         }
+    }
+
+    async restoreFromBackup() {
+        try {
+            const allKeys = await chrome.storage.local.get(null);
+            const backupKeys = Object.keys(allKeys)
+                .filter(key => key.startsWith('headsup_backup_'))
+                .sort()
+                .reverse();
+            
+            if (backupKeys.length > 0) {
+                const latestBackup = allKeys[backupKeys[0]];
+                console.log(`🔄 Restoring from backup: ${backupKeys[0]}`);
+                
+                this.savedSessions = latestBackup.savedSessions || [];
+                this.contentMappings = latestBackup.contentMappings || [];
+                this.llmConfig = { ...this.llmConfig, ...(latestBackup.llmConfig || {}) };
+                
+                // Re-render UI elements
+                this.renderContentMappings();
+                this.initializeDefaults();
+                
+                console.log(`✅ Restored ${this.contentMappings.length} content mappings from backup`);
+                return true;
+            }
+        } catch (error) {
+            console.error('Failed to restore from backup:', error);
+        }
+        return false;
     }
 
     async toggleRecording() {
