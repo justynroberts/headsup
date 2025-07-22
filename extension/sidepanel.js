@@ -713,9 +713,10 @@ class HeadsUp {
             coachingContent.innerHTML = '<div class="coaching-tips"></div>';
         }
         
-        const tipsContainer = coachingContent.querySelector('.coaching-tips');
+        let tipsContainer = coachingContent.querySelector('.coaching-tips');
         if (!tipsContainer) {
             coachingContent.innerHTML = '<div class="coaching-tips"></div>';
+            tipsContainer = coachingContent.querySelector('.coaching-tips');
         }
         
         // Get icon and class based on type
@@ -743,7 +744,6 @@ class HeadsUp {
         `;
         
         // Add new tip at the TOP (prepend) so latest is always visible
-        const tipsContainer = coachingContent.querySelector('.coaching-tips');
         tipsContainer.insertBefore(tip, tipsContainer.firstChild);
         
         // Add event listener for the dismiss button
