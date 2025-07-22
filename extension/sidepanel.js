@@ -345,7 +345,10 @@ class HeadsUp {
         };
 
         this.recognition.onerror = (event) => {
-            console.error('❌ Speech recognition error:', event.error, event);
+            // Don't log "no-speech" as an error - it's normal when user isn't speaking
+            if (event.error !== 'no-speech') {
+                console.error('❌ Speech recognition error:', event.error, event);
+            }
             
             if (event.error === 'not-allowed') {
                 this.showPermissionHelp();
@@ -673,6 +676,7 @@ class HeadsUp {
             .replace(/\bservice\s+level\s+agreement\b/g, 'sla');
 
         console.log(`🔍 Analyzing text: "${text}" → normalized: "${normalizedText}"`);
+        console.log(`📝 Available mappings: ${this.contentMappings.length}, Triggered: [${Array.from(this.sessionTriggeredTips).join(', ')}]`);
 
         // Check custom content mappings first (check both original and normalized)
         for (const mapping of this.contentMappings) {
