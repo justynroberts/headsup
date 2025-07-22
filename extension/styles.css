@@ -1520,3 +1520,14 @@ a:hover::after, .cta-link:hover::after {
         transform: translateX(-50%) translateY(20px); 
     }
 }
+
+.version-info {
+    font-size: 10px;
+    color: #666;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
