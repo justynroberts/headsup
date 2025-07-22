@@ -454,6 +454,9 @@ class HeadsUp {
                         wordCount: wordCount
                     });
                     console.log(`💾 STORED INTERIM: index ${i}, "${transcript}" (${wordCount} words)`);
+                    
+                    // REAL-TIME COACHING: Analyze interim results for immediate hints
+                    this.analyzeForCoaching(transcript);
                 }
                 
                 // Update live display (both interim and final)
