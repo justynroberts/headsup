@@ -742,7 +742,9 @@ class HeadsUp {
             <div class="tip-content">${content}</div>
         `;
         
-        coachingContent.querySelector('.coaching-tips').appendChild(tip);
+        // Add new tip at the TOP (prepend) so latest is always visible
+        const tipsContainer = coachingContent.querySelector('.coaching-tips');
+        tipsContainer.insertBefore(tip, tipsContainer.firstChild);
         
         // Add event listener for the dismiss button
         const dismissBtn = tip.querySelector('.tip-dismiss');
