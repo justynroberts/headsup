@@ -736,9 +736,15 @@ class HeadsUp {
         // Check custom content mappings first (check both original and normalized)
         for (const mapping of this.contentMappings) {
             for (const keyword of mapping.keywords) {
-                const keywordLower = keyword.toLowerCase();
-                if ((lowerText.includes(keywordLower) || normalizedText.includes(keywordLower)) 
-                    && !this.sessionTriggeredTips.has(mapping.id)) {
+                const keywordLower = keyword.toLowerCase().trim();
+                
+                // Check for exact matches and word boundary matches
+                const hasMatch = lowerText.includes(keywordLower) || 
+                                normalizedText.includes(keywordLower) ||
+                                // Also check with word boundaries for better matching
+                                new RegExp(`\\b${keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(lowerText);
+                
+                if (hasMatch && !this.sessionTriggeredTips.has(mapping.id)) {
                     console.log(`✅ Triggered mapping for keyword: "${keyword}" in "${text}"`);
                     this.addCoachingTip(mapping.type, mapping.content, keyword, mapping.type);
                     this.sessionTriggeredTips.add(mapping.id);
