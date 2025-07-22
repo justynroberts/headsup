@@ -1360,12 +1360,20 @@ class HeadsUp {
             <div class="content-mapping">
                 <div class="mapping-header">
                     <div class="mapping-type">${mapping.type}</div>
-                    <button class="delete-btn" onclick="app.deleteMapping(${mapping.id})">Delete</button>
+                    <button class="delete-btn" data-mapping-id="${mapping.id}">Delete</button>
                 </div>
                 <div class="mapping-keywords">Keywords: ${mapping.keywords.join(', ')}</div>
                 <div class="mapping-content">${mapping.content}</div>
             </div>
         `).join('');
+        
+        // Add event delegation for delete buttons
+        container.addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-btn')) {
+                const mappingId = parseInt(e.target.dataset.mappingId);
+                this.deleteMapping(mappingId);
+            }
+        });
     }
 
     deleteMapping(id) {
