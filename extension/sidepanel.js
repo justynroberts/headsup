@@ -37,16 +37,24 @@ class HeadsUp {
         
         // Live view toggle
         this.liveViewVisible = false;
+        this.currentTab = 'dashboard'; // Track current active tab
         
         // Speech recognition management
         this.recognitionTimeout = null;
         this.lastSpeechTime = null;
         this.networkErrorCount = 0;
         this.recoveryCount = 0;
+        this.isRestarting = false; // Prevent multiple simultaneous restarts
+        this.restartDelay = 100; // Initial restart delay
+        
+        // Operation state tracking
+        this.isTogglingRecording = false; // Prevent double-clicks
+        this.lastToggleTime = 0; // Debounce timing
         
         // Interim result preservation
         this.currentInterimResults = new Map(); // Store interim results by index
         this.lastProcessedIndex = -1;
+        this.pendingInterimBuffer = ''; // Buffer for accumulating interim text
         
         this.setupEventListeners();
         this.initializeUI();
@@ -65,53 +73,208 @@ class HeadsUp {
     }
 
     setupEventListeners() {
-        // Recording controls
-        document.getElementById('recordBtn').addEventListener('click', () => this.toggleRecording());
-        document.getElementById('liveViewToggle').addEventListener('click', () => this.toggleLiveView());
-        document.getElementById('clearBtn').addEventListener('click', () => this.clearSession());
-        document.getElementById('saveBtn').addEventListener('click', () => this.saveSession());
-        document.getElementById('getStartedBtn').addEventListener('click', () => this.startRecording());
-        document.getElementById('analyzeBtn').addEventListener('click', () => this.analyzeWithLLM());
-        
-        // Navigation switching
-        document.querySelectorAll('.nav-button').forEach(button => {
-            button.addEventListener('click', (e) => this.switchTab(e.currentTarget.dataset.tab));
-        });
-        
-        // Content management
-        document.getElementById('addMappingBtn').addEventListener('click', () => this.addContentMapping());
-        
-        // LLM settings
-        document.getElementById('llmProvider').addEventListener('change', (e) => this.updateLLMProvider(e.target.value));
-        document.getElementById('saveLLMBtn').addEventListener('click', () => this.saveLLMSettings());
-        
-        // Data management
-        document.getElementById('exportDataBtn').addEventListener('click', () => this.exportData());
-        document.getElementById('importDataBtn').addEventListener('click', () => this.importData());
-        document.getElementById('importFileInput').addEventListener('change', (e) => this.handleFileImport(e));
-        document.getElementById('clearDataBtn').addEventListener('click', () => this.clearData());
-        
-        // Content mappings toggle
-        document.getElementById('mappingsToggle').addEventListener('click', () => this.toggleMappingsList());
-        
-        // LLM settings toggle
-        document.getElementById('llmToggle').addEventListener('click', () => this.toggleLLMSettings());
-        
-        // Hide/Show UI controls
-        document.getElementById('hideUIBtn').addEventListener('click', () => this.hideUI());
-        document.getElementById('showUIBtn').addEventListener('click', () => this.showUI());
-        
-        // Copy/Save actions
-        document.getElementById('copyTranscriptBtn').addEventListener('click', () => this.copyTranscript());
-        document.getElementById('saveTranscriptBtn').addEventListener('click', () => this.saveTranscriptOnly());
-        document.getElementById('copyLLMBtn').addEventListener('click', () => this.copyLLMAnalysis());
-        document.getElementById('saveLLMAnalysisBtn').addEventListener('click', () => this.saveLLMAnalysis());
-        document.getElementById('saveAllBtn').addEventListener('click', () => this.saveAll());
+        try {
+            // Recording controls
+            const recordBtn = document.getElementById('recordBtn');
+            if (recordBtn) {
+                recordBtn.addEventListener('click', () => this.handleRecordBtn());
+            } else {
+                console.error('❌ recordBtn element not found');
+            }
+            
+            const clearBtn = document.getElementById('clearBtn');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => this.clearSession());
+            }
+            
+            const saveBtn = document.getElementById('saveBtn');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', () => this.saveSession());
+            }
+            
+            const getStartedBtn = document.getElementById('getStartedBtn');
+            if (getStartedBtn) {
+                // Remove any existing event listeners to prevent duplicates
+                const newGetStartedBtn = getStartedBtn.cloneNode(true);
+                getStartedBtn.parentNode.replaceChild(newGetStartedBtn, getStartedBtn);
+                newGetStartedBtn.addEventListener('click', () => this.toggleRecording());
+            }
+            
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            if (analyzeBtn) {
+                analyzeBtn.addEventListener('click', () => this.analyzeWithLLM());
+            }
+            
+            // Navigation switching
+            document.querySelectorAll('.nav-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const tab = e.currentTarget.dataset.tab;
+                    if (tab) {
+                        // Special handling for Live View button - toggle between dashboard and liveview
+                        if (tab === 'liveview' && button.id === 'liveViewBtn') {
+                            this.toggleLiveView();
+                        } else {
+                            this.switchTab(tab);
+                        }
+                    }
+                });
+            });
+            
+            // Content management
+            const addMappingBtn = document.getElementById('addMappingBtn');
+            if (addMappingBtn) {
+                addMappingBtn.addEventListener('click', () => this.addContentMapping());
+            }
+            
+            // LLM settings
+            const llmProvider = document.getElementById('llmProvider');
+            if (llmProvider) {
+                llmProvider.addEventListener('change', (e) => this.updateLLMProvider(e.target.value));
+            }
+            
+            const saveLLMBtn = document.getElementById('saveLLMBtn');
+            if (saveLLMBtn) {
+                saveLLMBtn.addEventListener('click', () => this.saveLLMSettings());
+            }
+            
+            // Data management
+            const exportDataBtn = document.getElementById('exportDataBtn');
+            if (exportDataBtn) {
+                exportDataBtn.addEventListener('click', () => this.exportData());
+            }
+            
+            const importDataBtn = document.getElementById('importDataBtn');
+            if (importDataBtn) {
+                importDataBtn.addEventListener('click', () => this.importData());
+            }
+            
+            const importFileInput = document.getElementById('importFileInput');
+            if (importFileInput) {
+                importFileInput.addEventListener('change', (e) => this.handleFileImport(e));
+            }
+            
+            const clearDataBtn = document.getElementById('clearDataBtn');
+            if (clearDataBtn) {
+                clearDataBtn.addEventListener('click', () => this.clearData());
+            }
+            
+            // Content mappings toggle
+            const mappingsToggle = document.getElementById('mappingsToggle');
+            if (mappingsToggle) {
+                mappingsToggle.addEventListener('click', () => this.toggleMappingsList());
+            }
+            
+            // LLM settings toggle
+            const llmToggle = document.getElementById('llmToggle');
+            if (llmToggle) {
+                llmToggle.addEventListener('click', () => this.toggleLLMSettings());
+            }
+            
+            // Hide/Show UI controls
+            const hideUIBtn = document.getElementById('hideUIBtn');
+            if (hideUIBtn) {
+                hideUIBtn.addEventListener('click', () => this.hideUI());
+            }
+            
+            const showUIBtn = document.getElementById('showUIBtn');
+            if (showUIBtn) {
+                showUIBtn.addEventListener('click', () => this.showUI());
+            }
+            
+            // Copy/Save actions
+            const copyTranscriptBtn = document.getElementById('copyTranscriptBtn');
+            if (copyTranscriptBtn) {
+                copyTranscriptBtn.addEventListener('click', () => this.copyTranscript());
+            }
+            
+            const saveTranscriptBtn = document.getElementById('saveTranscriptBtn');
+            if (saveTranscriptBtn) {
+                saveTranscriptBtn.addEventListener('click', () => this.saveTranscriptOnly());
+            }
+            
+            const copyLLMBtn = document.getElementById('copyLLMBtn');
+            if (copyLLMBtn) {
+                copyLLMBtn.addEventListener('click', () => this.copyLLMAnalysis());
+            }
+            
+            const saveLLMAnalysisBtn = document.getElementById('saveLLMAnalysisBtn');
+            if (saveLLMAnalysisBtn) {
+                saveLLMAnalysisBtn.addEventListener('click', () => this.saveLLMAnalysis());
+            }
+            
+            const saveAllBtn = document.getElementById('saveAllBtn');
+            if (saveAllBtn) {
+                saveAllBtn.addEventListener('click', () => this.saveAll());
+            }
+            
+            console.log('✅ All event listeners setup completed');
+            
+        } catch (error) {
+            console.error('❌ Error setting up event listeners:', error);
+        }
     }
 
     initializeUI() {
+        this.validateElements();
         this.updateUI();
         this.updateStatus('Ready');
+        // Ensure we start on the dashboard tab
+        this.switchTab('dashboard');
+    }
+    
+    validateElements() {
+        const requiredElements = [
+            'recordBtn', 'clearBtn', 'saveBtn', 'getStartedBtn', 
+            'statusIndicator', 'coachingContent', 'transcriptionArea'
+        ];
+        
+        const optionalElements = [
+            'liveViewBtn', 'hideUIBtn', 'showUIBtn', 'analyzeBtn',
+            'addMappingBtn', 'llmProvider', 'saveLLMBtn'
+        ];
+        
+        console.log('🔍 Validating page elements...');
+        
+        let missingRequired = [];
+        let missingOptional = [];
+        
+        requiredElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (!element) {
+                missingRequired.push(id);
+            }
+        });
+        
+        optionalElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (!element) {
+                missingOptional.push(id);
+            }
+        });
+        
+        if (missingRequired.length > 0) {
+            console.error('❌ Missing required elements:', missingRequired);
+        }
+        
+        if (missingOptional.length > 0) {
+            console.warn('⚠️ Missing optional elements:', missingOptional);
+        }
+        
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        console.log(`📊 Found ${navButtons.length} navigation buttons`);
+        console.log(`📊 Found ${tabContents.length} tab content areas`);
+        
+        if (navButtons.length === 0) {
+            console.error('❌ No navigation buttons found with .nav-btn class');
+        }
+        
+        if (tabContents.length === 0) {
+            console.error('❌ No tab content areas found with .tab-content class');
+        }
+        
+        console.log('✅ Element validation complete');
     }
 
     async loadFromStorage() {
@@ -253,17 +416,56 @@ class HeadsUp {
     }
 
     async toggleRecording() {
-        console.log('🎯 TOGGLE RECORDING clicked, current state:', this.isRecording);
-        if (this.isRecording) {
-            await this.stopRecording();
-        } else {
-            await this.startRecording();
+        const now = Date.now();
+        const debounceDelay = 1000; // 1 second debounce
+        
+        // Prevent double-clicks and rapid toggling
+        if (this.isTogglingRecording) {
+            console.log('⚠️ Toggle already in progress, ignoring duplicate click');
+            return;
+        }
+        
+        if (now - this.lastToggleTime < debounceDelay) {
+            console.log(`⚠️ Toggle too soon (${now - this.lastToggleTime}ms ago), ignoring click`);
+            return;
+        }
+        
+        this.isTogglingRecording = true;
+        this.lastToggleTime = now;
+        
+        try {
+            console.log('🎯 TOGGLE RECORDING clicked, current state:', this.isRecording);
+            
+            // Update status to show we're processing
+            this.updateStatus(this.isRecording ? 'Stopping...' : 'Starting...');
+            
+            if (this.isRecording) {
+                await this.stopRecording();
+            } else {
+                await this.startRecording();
+            }
+        } catch (error) {
+            console.error('❌ Error during toggle recording:', error);
+            this.updateStatus('Error - please try again');
+        } finally {
+            // Always reset the toggle state
+            setTimeout(() => {
+                this.isTogglingRecording = false;
+                console.log('✅ Toggle state reset, ready for next click');
+            }, 500); // Reset after 500ms
         }
     }
 
     async startRecording() {
         try {
             console.log('🎙️ START RECORDING called');
+            console.log(`📊 Current state - isRecording: ${this.isRecording}, isRestarting: ${this.isRestarting}, isTogglingRecording: ${this.isTogglingRecording}`);
+            
+            if (this.isRecording) {
+                console.warn('⚠️ Already recording, ignoring start request');
+                return;
+            }
+            
             this.updateStatus('Requesting microphone access...');
             
             // Show helpful message about microphone permissions
@@ -356,30 +558,41 @@ class HeadsUp {
                 clearTimeout(this.recognitionTimeout);
             }
             
-            // Set timeout to restart if no speech for 30 seconds
+            // Set timeout to restart if no speech for 45 seconds (increased for stability)
             this.recognitionTimeout = setTimeout(() => {
-                if (this.isRecording) {
-                    console.log('No speech detected for 30s, restarting...');
+                if (this.isRecording && !this.isRestarting) {
+                    console.log('No speech detected for 45s, preserving interim and restarting...');
+                    this.preserveInterimResults();
                     this.recognition.stop();
                 }
-            }, 30000);
+            }, 45000);
         };
 
         this.recognition.onend = () => {
             console.log('🔚 Speech recognition ended');
-            if (this.isRecording) {
+            if (this.isRecording && !this.isRestarting) {
+                this.isRestarting = true;
                 console.log('🔄 Still recording - preserving interim results and restarting recognition...');
                 
                 // Preserve any interim results before restarting
                 this.preserveInterimResults();
-                // Create a new recognition instance to avoid issues
+                
+                // Use adaptive restart delay to prevent rapid switching
+                const delay = Math.min(this.restartDelay * (1 + this.recoveryCount * 0.5), 2000);
+                console.log(`⏰ Restarting in ${delay}ms (recovery #${this.recoveryCount + 1})`);
+                
                 setTimeout(() => {
-                    if (this.isRecording) {
+                    if (this.isRecording && this.isRestarting) {
                         try {
                             // Try simple restart first
                             this.recognition.start();
                             console.log('✅ Recognition restarted successfully');
-                            this.updateStatus('Recording (restarted)', true);
+                            this.recoveryCount++;
+                            this.isRestarting = false;
+                            // Update status less frequently to avoid rapid switching
+                            if (this.recoveryCount % 3 === 0) {
+                                this.updateStatus('Recording', true);
+                            }
                         } catch (error) {
                             console.error('⚠️ Simple restart failed:', error);
                             // If simple restart fails, create new instance
@@ -388,14 +601,17 @@ class HeadsUp {
                                 this.setupSpeechRecognition();
                                 this.recognition.start();
                                 console.log('✅ Created new recognition instance');
-                                this.updateStatus('Recording (recovered)', true);
+                                this.recoveryCount++;
+                                this.isRestarting = false;
+                                this.updateStatus('Recording', true);
                             } catch (error2) {
                                 console.error('❌ Full restart failed:', error2);
+                                this.isRestarting = false;
                                 this.updateStatus('Recognition failed - click to retry');
                             }
                         }
                     }
-                }, 200); // Slightly longer delay for stability
+                }, delay);
             }
         };
 
@@ -412,10 +628,16 @@ class HeadsUp {
                 this.stopRecording().catch(err => console.error('Error stopping recording:', err));
             } else if (event.error === 'network') {
                 this.networkErrorCount++;
-                console.log(`⚠️ Network error #${this.networkErrorCount} - skipping this segment but continuing recording`);
-                // Don't restart - just skip this error and let recognition continue
-                // The onend handler will restart if needed
-                this.updateStatus(`Recording (${this.networkErrorCount} network errors skipped)`, true);
+                console.log(`⚠️ Network error #${this.networkErrorCount} - preserving interim and continuing`);
+                
+                // Preserve any pending interim results
+                this.preserveInterimResults();
+                
+                // Don't restart immediately - let onend handle it with proper delay
+                // Only update status occasionally to avoid rapid switching
+                if (this.networkErrorCount % 5 === 0) {
+                    this.updateStatus(`Recording (${this.networkErrorCount} network interruptions)`, true);
+                }
             } else if (event.error === 'no-speech') {
                 console.log('⏸️ No speech detected - this is normal, continuing...');
                 // No-speech is normal when user isn't speaking, don't stop recording
@@ -504,13 +726,19 @@ class HeadsUp {
                     console.log(`💾 Segments: before=${beforeSegments}, after=${afterSegments}`);
                     console.log(`📝 Current transcript length: ${this.currentSessionTranscript.length} chars`);
                 } else {
-                    // For interim results, store them but replace any previous interim for this index
+                    // For interim results, store them and also update buffer
                     this.currentInterimResults.set(i, {
                         transcript: transcript,
                         confidence: confidence,
                         timestamp: Date.now(),
                         wordCount: wordCount
                     });
+                    
+                    // Keep the longest interim text in buffer for preservation
+                    if (transcript.length > this.pendingInterimBuffer.length) {
+                        this.pendingInterimBuffer = transcript;
+                    }
+                    
                     console.log(`💾 STORED INTERIM: index ${i}, "${transcript}" (${wordCount} words)`);
                     
                     // REAL-TIME COACHING: Analyze interim results for immediate hints
@@ -531,69 +759,110 @@ class HeadsUp {
     
     autoSaveStaleInterims() {
         const now = Date.now();
-        const maxAge = 5000; // 5 seconds
+        const maxAge = 8000; // Increased to 8 seconds to reduce premature saving
+        
+        // Find the oldest stale interim (if any)
+        let oldestStale = null;
+        let oldestAge = 0;
         
         for (const [index, result] of this.currentInterimResults.entries()) {
             const age = now - result.timestamp;
-            if (age > maxAge) {
-                console.log(`⏰ AUTO-SAVING STALE INTERIM (${age}ms old): "${result.transcript}"`);
-                
-                // Save this stale interim as final to prevent loss
-                this.addTranscript(result.transcript);
-                this.saveTranscriptSegment(result.transcript).catch(err => 
-                    console.error('Error saving stale interim:', err)
-                );
-                this.analyzeForCoaching(result.transcript);
-                
-                // Update metrics
-                const words = result.transcript.trim().split(/\s+/).filter(w => w.length > 0);
-                this.wordCount += words.length;
-                this.confidenceSum += result.confidence;
-                this.confidenceCount++;
-                
-                // Remove from interim results
-                this.currentInterimResults.delete(index);
-                console.log(`✅ STALE INTERIM SAVED AND REMOVED: "${result.transcript}"`);
+            if (age > maxAge && age > oldestAge) {
+                oldestStale = { index, result, age };
+                oldestAge = age;
             }
+        }
+        
+        // Only save one stale interim at a time to avoid duplicates
+        if (oldestStale) {
+            console.log(`⏰ AUTO-SAVING OLDEST STALE INTERIM (${(oldestStale.age/1000).toFixed(1)}s old): "${oldestStale.result.transcript}"`);
+            
+            // Save this stale interim as final to prevent loss
+            this.addTranscript(oldestStale.result.transcript);
+            this.saveTranscriptSegment(oldestStale.result.transcript).catch(err => 
+                console.error('Error saving stale interim:', err)
+            );
+            this.analyzeForCoaching(oldestStale.result.transcript);
+            
+            // Update metrics
+            const words = oldestStale.result.transcript.trim().split(/\s+/).filter(w => w.length > 0);
+            this.wordCount += words.length;
+            this.confidenceSum += oldestStale.result.confidence;
+            this.confidenceCount++;
+            
+            // Remove from interim results
+            this.currentInterimResults.delete(oldestStale.index);
+            console.log(`✅ OLDEST STALE INTERIM SAVED: "${oldestStale.result.transcript}" (${words.length} words)`);
         }
     }
     
     preserveInterimResults() {
-        if (this.currentInterimResults.size === 0) {
+        // Also check if we have any accumulated interim text in buffer
+        if (this.currentInterimResults.size === 0 && !this.pendingInterimBuffer.trim()) {
             console.log('📭 No interim results to preserve');
             return;
         }
         
-        console.log(`🚨 PRESERVING ALL ${this.currentInterimResults.size} INTERIM RESULTS BEFORE RESTART`);
+        let totalPreserved = 0;
         
-        // Save ALL interim results, not just the best one
-        // Sort by index to maintain order
-        const sortedResults = Array.from(this.currentInterimResults.entries()).sort((a, b) => a[0] - b[0]);
+        // First, handle any buffered interim text
+        if (this.pendingInterimBuffer.trim()) {
+            console.log(`💾 PRESERVING BUFFERED TEXT: "${this.pendingInterimBuffer}"`);
+            this.addTranscript(this.pendingInterimBuffer);
+            this.saveTranscriptSegment(this.pendingInterimBuffer).catch(err => 
+                console.error('Error saving buffered interim:', err)
+            );
+            this.analyzeForCoaching(this.pendingInterimBuffer);
+            totalPreserved++;
+            this.pendingInterimBuffer = '';
+        }
         
-        for (const [index, result] of sortedResults) {
-            if (result.transcript.trim()) {
-                console.log(`💾 PRESERVING INTERIM #${index}: "${result.transcript}" (conf: ${result.confidence.toFixed(2)}, ${result.wordCount} words)`);
+        if (this.currentInterimResults.size > 0) {
+            console.log(`🚨 PRESERVING ${this.currentInterimResults.size} INTERIM RESULTS`);
+            
+            // Find the best (longest and most confident) interim result
+            let bestResult = null;
+            let bestScore = 0;
+            
+            for (const [index, result] of this.currentInterimResults.entries()) {
+                if (result.transcript.trim()) {
+                    // Score based on length and confidence
+                    const score = result.transcript.length * result.confidence;
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestResult = { index, ...result };
+                    }
+                }
+            }
+            
+            // Save only the best interim result to avoid duplicates
+            if (bestResult) {
+                console.log(`💾 PRESERVING BEST INTERIM: "${bestResult.transcript}" (conf: ${bestResult.confidence.toFixed(2)})`);
                 
-                // Save this interim result as final to prevent loss
-                this.addTranscript(result.transcript);
-                this.saveTranscriptSegment(result.transcript).catch(err => 
+                this.addTranscript(bestResult.transcript);
+                this.saveTranscriptSegment(bestResult.transcript).catch(err => 
                     console.error('Error saving preserved interim:', err)
                 );
-                this.analyzeForCoaching(result.transcript);
+                this.analyzeForCoaching(bestResult.transcript);
                 
                 // Update metrics
-                const words = result.transcript.trim().split(/\s+/).filter(w => w.length > 0);
+                const words = bestResult.transcript.trim().split(/\s+/).filter(w => w.length > 0);
                 this.wordCount += words.length;
-                this.confidenceSum += result.confidence;
+                this.confidenceSum += bestResult.confidence;
                 this.confidenceCount++;
+                totalPreserved++;
                 
-                console.log(`✅ PRESERVED #${index}: "${result.transcript}" (${words.length} words)`);
+                console.log(`✅ PRESERVED BEST: "${bestResult.transcript}" (${words.length} words)`);
             }
         }
         
         // Clear interim results after preserving
         this.currentInterimResults.clear();
         this.lastProcessedIndex = -1;
+        
+        if (totalPreserved > 0) {
+            console.log(`🎯 TOTAL PRESERVED: ${totalPreserved} segments`);
+        }
     }
     
     setupInterimPreservation() {
@@ -626,6 +895,30 @@ class HeadsUp {
             return;
         }
         
+        // Enhanced duplicate detection
+        const recentSegments = this.transcriptSegments.slice(-3);
+        for (const segment of recentSegments) {
+            if (segment.text.toLowerCase() === trimmedTranscript.toLowerCase()) {
+                console.log(`⚠️ EXACT DUPLICATE: "${trimmedTranscript}" already exists, skipping`);
+                return;
+            }
+        }
+        
+        // Check for overlap with recent transcript to avoid partial duplicates
+        const newWords = trimmedTranscript.toLowerCase().split(/\s+/).filter(w => w.length > 0);
+        const recentText = this.currentSessionTranscript.slice(-200).toLowerCase(); // Last 200 chars
+        const recentWords = recentText.split(/\s+/).filter(w => w.length > 0);
+        
+        if (recentWords.length > 0) {
+            const overlapCount = this.calculateWordOverlap(recentWords, newWords);
+            const overlapRatio = overlapCount / newWords.length;
+            
+            if (overlapRatio > 0.8) { // If more than 80% overlap
+                console.log(`⚠️ HIGH OVERLAP (${(overlapRatio*100).toFixed(0)}%): "${trimmedTranscript}" mostly overlaps recent text, skipping`);
+                return;
+            }
+        }
+        
         const beforeLength = this.currentSessionTranscript.length;
         const beforeWords = this.currentSessionTranscript.split(/\s+/).filter(w => w.trim()).length;
         
@@ -647,18 +940,20 @@ class HeadsUp {
         console.log(`   Before: ${beforeLength} chars, ${beforeWords} words`);
         console.log(`   After: ${afterLength} chars, ${afterWords} words`);
         console.log(`   Expected word increase: ${addedWords}, Actual: ${afterWords - beforeWords}`);
+    }
+    
+    calculateWordOverlap(words1, words2) {
+        const set1 = new Set(words1);
+        const set2 = new Set(words2);
+        let overlap = 0;
         
-        // Log full transcript periodically for debugging
-        if (this.currentSessionTranscript.length > 100) {
-            console.log(`📝 Current transcript preview: "${this.currentSessionTranscript.substring(0, 50)}...${this.currentSessionTranscript.substring(this.currentSessionTranscript.length - 50)}"`);
-        } else {
-            console.log(`📝 Full transcript: "${this.currentSessionTranscript}"`);
+        for (const word of set2) {
+            if (set1.has(word)) {
+                overlap++;
+            }
         }
         
-        // Verify no corruption
-        if (afterWords < beforeWords) {
-            console.error(`🚨 WORD COUNT DECREASED! This should never happen. Before: ${beforeWords}, After: ${afterWords}`);
-        }
+        return overlap;
     }
 
     updateLiveTranscription(transcript, isFinal) {
@@ -964,13 +1259,29 @@ class HeadsUp {
     }
 
     async stopRecording() {
+        console.log('🛑 STOP RECORDING called');
+        
+        if (!this.isRecording) {
+            console.log('⚠️ Not currently recording, ignoring stop request');
+            return;
+        }
+        
         this.isRecording = false;
+        this.isRestarting = false; // Stop any pending restarts
         this.recordingEndTimestamp = new Date();
         this.sessionEndTime = Date.now();
         
+        // Final preservation of any remaining interim results
+        console.log('💾 Final preservation of interim results...');
+        this.preserveInterimResults();
+        
         if (this.recognition) {
             this.recognition.onend = null;
-            this.recognition.stop();
+            try {
+                this.recognition.stop();
+            } catch (error) {
+                console.log('⚠️ Error stopping recognition:', error);
+            }
             this.recognition = null;
         }
         
@@ -1013,6 +1324,30 @@ class HeadsUp {
             document.getElementById('transcriptActions').style.display = 'flex';
         }
         
+        // Log comprehensive session analytics and validate word capture
+        const duration = this.recordingEndTimestamp - this.recordingStartTimestamp;
+        const actualWords = this.currentSessionTranscript.trim().split(/\s+/).filter(w => w.length > 0).length;
+        
+        console.log(`📊 RECORDING COMPLETE ANALYTICS:`);
+        console.log(`⏱️  Duration: ${(duration/1000).toFixed(1)}s`);
+        console.log(`📝  Tracked words: ${this.wordCount}`);
+        console.log(`📖  Actual words in transcript: ${actualWords}`);
+        console.log(`📦  Segments: ${this.transcriptSegments.length}`);
+        console.log(`🔄  Network errors: ${this.networkErrorCount}`);
+        console.log(`🔁  Recovery attempts: ${this.recoveryCount}`);
+        console.log(`📊  Average confidence: ${this.confidenceCount > 0 ? (this.confidenceSum/this.confidenceCount).toFixed(2) : 'N/A'}`);
+        
+        if (Math.abs(actualWords - this.wordCount) > actualWords * 0.1) {
+            console.warn(`⚠️ WORD COUNT MISMATCH: Expected ${this.wordCount}, got ${actualWords} (${Math.abs(actualWords - this.wordCount)} difference)`);
+        } else {
+            console.log(`✅ WORD CAPTURE VALIDATION: Tracking accuracy within 10%`);
+        }
+        
+        // Reset counters for next session
+        this.networkErrorCount = 0;
+        this.recoveryCount = 0;
+        this.restartDelay = 100;
+        
         // Notify background service that recording stopped
         try {
             await chrome.runtime.sendMessage({ action: 'recording-stopped' });
@@ -1042,22 +1377,16 @@ class HeadsUp {
         }, 1000);
     }
 
+    handleRecordBtn() {
+        // Record button toggles recording and keeps you on main dashboard
+        this.toggleRecording();
+        // Always switch to dashboard when recording (this is where hints are shown)
+        this.switchTab('dashboard');
+    }
+    
     toggleLiveView() {
-        const liveView = document.getElementById('liveView');
-        const liveViewToggle = document.getElementById('liveViewToggle');
-        const coachingSection = document.querySelector('.coaching-section');
-        
-        this.liveViewVisible = !this.liveViewVisible;
-        
-        if (this.liveViewVisible) {
-            liveView.classList.remove('collapsed');
-            liveViewToggle.classList.add('active');
-            coachingSection.style.display = 'none';
-        } else {
-            liveView.classList.add('collapsed');
-            liveViewToggle.classList.remove('active');
-            coachingSection.style.display = 'flex';
-        }
+        // This is now handled by tab switching
+        this.switchTab('liveview');
     }
     
     toggleMappingsList() {
@@ -1163,7 +1492,7 @@ class HeadsUp {
                 <h3>Welcome to Heads Up</h3>
                 <div class="version-info">v1.0.5</div>
                 <p>Click the record button to start recording your conversation and get real-time coaching tips.</p>
-                <button class="get-started-btn" id="getStartedBtn2">
+                <button class="get-started-btn" id="getStartedBtn">
                     <svg style="margin-right: 8px; width: 14px; height: 14px;" viewBox="0 0 24 24" fill="currentColor">
                         <polygon points="5,3 19,12 5,21"/>
                     </svg>
@@ -1172,8 +1501,16 @@ class HeadsUp {
             </div>
         `;
         
-        // Re-add event listener for the new button
-        document.getElementById('getStartedBtn2').addEventListener('click', () => this.startRecording());
+        // Re-add event listener for the new button (remove old listeners first)
+        const newGetStartedBtn = document.getElementById('getStartedBtn');
+        if (newGetStartedBtn) {
+            // Remove any existing listeners to prevent duplicates
+            newGetStartedBtn.replaceWith(newGetStartedBtn.cloneNode(true));
+            const cleanBtn = document.getElementById('getStartedBtn');
+            if (cleanBtn) {
+                cleanBtn.addEventListener('click', () => this.toggleRecording());
+            }
+        }
         document.getElementById('analyzeBtn').style.display = 'none';
     }
 
@@ -1282,17 +1619,57 @@ class HeadsUp {
     }
 
     updateUI() {
+        // Update main record button
         const recordBtn = document.getElementById('recordBtn');
         const recordIcon = document.getElementById('recordIcon');
+        const recordBtnText = document.getElementById('recordBtnText');
         
         if (this.isRecording) {
-            recordBtn.classList.add('recording');
-            recordIcon.innerHTML = '<rect x="6" y="6" width="12" height="12" rx="2"/>';
-            recordBtn.setAttribute('data-tooltip', 'Stop Recording');
+            if (recordBtn) recordBtn.classList.add('recording');
+            if (recordIcon) recordIcon.innerHTML = '<rect x="6" y="6" width="12" height="12" rx="2"/>';
+            if (recordBtnText) recordBtnText.textContent = 'Stop';
         } else {
-            recordBtn.classList.remove('recording');
-            recordIcon.innerHTML = '<circle cx="12" cy="12" r="8"/>';
-            recordBtn.setAttribute('data-tooltip', 'Start Recording');
+            if (recordBtn) recordBtn.classList.remove('recording');
+            if (recordIcon) recordIcon.innerHTML = '<circle cx="12" cy="12" r="8"/>';
+            if (recordBtnText) recordBtnText.textContent = 'Record';
+        }
+        
+        // Update Get Started button
+        const getStartedBtn = document.getElementById('getStartedBtn');
+        if (getStartedBtn) {
+            const btnIcon = getStartedBtn.querySelector('svg');
+            const btnText = getStartedBtn.childNodes[getStartedBtn.childNodes.length - 1];
+            
+            if (this.isRecording) {
+                getStartedBtn.classList.add('recording');
+                if (btnIcon) {
+                    btnIcon.innerHTML = '<rect x="6" y="6" width="12" height="12" rx="2"/>';
+                }
+                if (btnText && btnText.nodeType === Node.TEXT_NODE) {
+                    btnText.textContent = 'Stop Recording';
+                }
+            } else {
+                getStartedBtn.classList.remove('recording');
+                if (btnIcon) {
+                    btnIcon.innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+                }
+                if (btnText && btnText.nodeType === Node.TEXT_NODE) {
+                    btnText.textContent = 'Get Started';
+                }
+            }
+        }
+
+        // Update Live View button to show toggle state
+        const liveViewBtn = document.getElementById('liveViewBtn');
+        if (liveViewBtn) {
+            const liveViewText = liveViewBtn.querySelector('span');
+            if (this.currentTab === 'liveview') {
+                if (liveViewText) liveViewText.textContent = 'Main View';
+                liveViewBtn.classList.add('active');
+            } else {
+                if (liveViewText) liveViewText.textContent = 'Live View';
+                liveViewBtn.classList.remove('active');
+            }
         }
     }
 
@@ -1306,17 +1683,58 @@ class HeadsUp {
 
     // Navigation Management
     switchTab(tabName) {
-        // Update navigation buttons
-        document.querySelectorAll('.nav-button').forEach(button => {
-            button.classList.remove('active');
-        });
-        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        try {
+            console.log(`🔄 Switching to tab: ${tabName}`);
+            this.currentTab = tabName; // Track current tab
+            
+            // Update navigation buttons (but don't highlight record button as active)
+            document.querySelectorAll('.nav-btn').forEach(button => {
+                if (button.id !== 'recordBtn' && button.id !== 'hideUIBtn') {
+                    button.classList.remove('active');
+                }
+            });
+            
+            // Only highlight the clicked tab button (not record or hide buttons)
+            if (tabName !== 'dashboard') {
+                const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+                if (activeBtn) {
+                    activeBtn.classList.add('active');
+                    console.log(`✅ Activated button for tab: ${tabName}`);
+                } else {
+                    console.warn(`⚠️ No button found for tab: ${tabName}`);
+                }
+            }
 
-        // Update tab content
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.remove('active');
-        });
-        document.getElementById(`${tabName}-tab`).classList.add('active');
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            const activeTab = document.getElementById(`${tabName}-tab`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+                console.log(`✅ Activated content for tab: ${tabName}`);
+            } else {
+                console.warn(`⚠️ No content found for tab: ${tabName}-tab`);
+            }
+        } catch (error) {
+            console.error(`❌ Error switching to tab ${tabName}:`, error);
+        }
+    }
+
+    toggleLiveView() {
+        try {
+            // Toggle between dashboard and liveview
+            if (this.currentTab === 'liveview') {
+                console.log('🔄 Toggling from Live View back to Dashboard');
+                this.switchTab('dashboard');
+            } else {
+                console.log('🔄 Toggling from Dashboard to Live View');
+                this.switchTab('liveview');
+            }
+        } catch (error) {
+            console.error('❌ Error toggling live view:', error);
+        }
     }
 
     // Content Management

@@ -30,48 +30,42 @@
 
         <!-- Main UI Content -->
         <div id="mainUIContent" class="main-ui-content">
-        <!-- Top Controls -->
-        <div class="top-controls">
-            <div class="control-buttons">
-                <button id="recordBtn" class="control-btn record-control tooltip" data-tooltip="Start Recording">
-                    <svg id="recordIcon" viewBox="0 0 24 24" fill="currentColor">
-                        <circle cx="12" cy="12" r="8"/>
-                    </svg>
-                </button>
-                <button id="liveViewToggle" class="control-btn tooltip" data-tooltip="Toggle Live View">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                </button>
-                <button id="hideUIBtn" class="control-btn tooltip" data-tooltip="Hide UI (recording continues)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 6L6 18"/>
-                        <path d="M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <div class="nav-buttons">
-                <button class="nav-button active tooltip" data-tab="recording" data-tooltip="Recording Dashboard">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 9h6v6h-6z"/>
-                        <path d="M21 15V9a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2Z"/>
-                    </svg>
-                </button>
-                <button class="nav-button tooltip" data-tab="content" data-tooltip="Content Management">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                        <polyline points="14,2 14,8 20,8"/>
-                    </svg>
-                </button>
-                <button class="nav-button tooltip" data-tab="settings" data-tooltip="Settings & LLM Config">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="3"/>
-                        <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m15.5-3.5L19 4m-2.5 15.5L19 20M4.5 16.5L2 19m2.5-15.5L2 5"/>
-                    </svg>
-                </button>
-            </div>
+        <!-- Top Navigation Bar -->
+        <div class="top-nav">
+            <button id="recordBtn" class="nav-btn record-btn">
+                <svg id="recordIcon" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="8"/>
+                </svg>
+                <span id="recordBtnText">Record</span>
+            </button>
+            <button id="liveViewBtn" class="nav-btn" data-tab="liveview">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <span>Live View</span>
+            </button>
+            <button class="nav-btn" data-tab="content">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                </svg>
+                <span>Content</span>
+            </button>
+            <button class="nav-btn" data-tab="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m15.5-3.5L19 4m-2.5 15.5L19 20M4.5 16.5L2 19m2.5-15.5L2 5"/>
+                </svg>
+                <span>Settings</span>
+            </button>
+            <button id="hideUIBtn" class="nav-btn hide-ui-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18"/>
+                    <path d="M6 6l12 12"/>
+                </svg>
+                <span>Hide</span>
+            </button>
         </div>
 
         <!-- Status Indicator -->
@@ -82,8 +76,8 @@
             </div>
         </div>
 
-        <!-- Recording Tab -->
-        <div id="recording-tab" class="tab-content active">
+        <!-- Main Dashboard Tab (where hints are shown) -->
+        <div id="dashboard-tab" class="tab-content active">
             <div id="permissionHelp" class="permission-help" style="display: none;">
                 <div class="help-title">💡 Enable Microphone Access</div>
                 <div class="help-steps">
@@ -93,17 +87,6 @@
             
             <div class="main-content">
 
-                <!-- Live Transcription View -->
-                <div id="liveView" class="live-view collapsed">
-                    <div class="live-header">
-                        <h3>Live Transcription</h3>
-                    </div>
-                    <div class="live-content">
-                        <div id="transcriptionArea" class="transcription-area">
-                            <div class="transcription-placeholder">Start recording to see live transcription...</div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Coaching Section -->
                 <div class="coaching-section">
@@ -154,6 +137,20 @@
                     <button id="saveAllBtn" class="btn-secondary">
                         📦 Save All
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live View Tab -->
+        <div id="liveview-tab" class="tab-content">
+            <div class="live-view-full">
+                <div class="live-header">
+                    <h3>Live Transcription</h3>
+                </div>
+                <div class="live-content">
+                    <div id="transcriptionArea" class="transcription-area">
+                        <div class="transcription-placeholder">Start recording to see live transcription...</div>
+                    </div>
                 </div>
             </div>
         </div>
