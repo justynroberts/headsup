@@ -92,6 +92,11 @@ class HeadsUp {
                 saveBtn.addEventListener('click', () => this.saveSession());
             }
             
+            const nextMeetingBtn = document.getElementById('nextMeetingBtn');
+            if (nextMeetingBtn) {
+                nextMeetingBtn.addEventListener('click', () => this.clearAndStartNew());
+            }
+            
             const getStartedBtn = document.getElementById('getStartedBtn');
             if (getStartedBtn) {
                 // Remove any existing event listeners to prevent duplicates
@@ -1482,6 +1487,55 @@ class HeadsUp {
             this.clearTranscription();
             this.updateStatus('Session cleared');
         }
+    }
+
+    async clearAndStartNew() {
+        console.log('🔄 NEXT MEETING: Starting new session');
+        
+        // Stop current recording if active
+        if (this.isRecording) {
+            await this.stopRecording();
+        }
+        
+        // Clear everything without confirmation (user already clicked Next Meeting)
+        this.currentSessionTranscript = '';
+        this.transcriptSegments = [];
+        this.wordCount = 0;
+        this.sentenceCount = 0;
+        this.confidenceSum = 0;
+        this.confidenceCount = 0;
+        this.sessionStartTime = null;
+        this.sessionEndTime = null;
+        this.sessionTriggeredTips.clear();
+        this.lastLLMAnalysis = null;
+        
+        // Clear stored session if exists
+        if (this.sessionStartTime) {
+            const storageKey = `transcript_session_${this.sessionStartTime}`;
+            chrome.storage.local.remove(storageKey);
+        }
+        
+        // Reset UI
+        const transcriptionArea = document.getElementById('transcriptionArea');
+        if (transcriptionArea) {
+            transcriptionArea.innerHTML = '<div class="transcription-placeholder">Start recording to see live transcription...</div>';
+        }
+        
+        // Reset coaching content and return to dashboard
+        this.clearTranscription();
+        this.switchTab('dashboard');
+        
+        // Hide analysis buttons
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const transcriptActions = document.getElementById('transcriptActions');
+        const llmActions = document.getElementById('llmActions');
+        
+        if (analyzeBtn) analyzeBtn.style.display = 'none';
+        if (transcriptActions) transcriptActions.style.display = 'none';
+        if (llmActions) llmActions.style.display = 'none';
+        
+        this.updateStatus('Ready for next meeting');
+        console.log('✅ Next meeting session ready');
     }
 
     clearTranscription() {

@@ -401,6 +401,18 @@ body {
     background: rgba(34, 197, 94, 0.2);
 }
 
+#nextMeetingBtn {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+}
+
+#nextMeetingBtn:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
+    transform: translateY(-1px);
+}
+
 .coaching-content {
     flex: 1;
     overflow-y: auto;
