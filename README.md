@@ -22,9 +22,10 @@
 
 4. **Start Coaching!**
    - Click the Heads Up icon in Chrome toolbar
-   - Click "Get Started" 
+   - Click "Get Started" (toggles to "Stop Recording")
    - Allow microphone access
    - Say "That's expensive" → Watch coaching hint appear instantly! 🎯
+   - Use "Live View" button to toggle between hints and live transcription
 
 ## ⚡ Get Value in 30 Seconds
 
@@ -46,9 +47,10 @@
 
 - **🎙️ Real-Time Transcription** - See your conversation as you speak
 - **⚡ Instant Coaching** - Hints appear the moment you say trigger words
+- **🔄 Smart Toggle Views** - Switch between coaching hints and live transcription
 - **🤖 AI Analysis** - Connect OpenAI, Claude, or local LLM for deep insights  
 - **📚 Custom Coaching** - Add your own keyword → response mappings
-- **💾 Never Lose Data** - Automatic backups prevent data loss during updates
+- **💾 Never Lose Data** - Enhanced reliability prevents word loss during transcription
 
 ## 💡 Pro Tips
 
